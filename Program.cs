@@ -1,6 +1,12 @@
-var builder = WebApplication.CreateBuilder(args);
+using IquraStudyBE.Context;
+using Microsoft.EntityFrameworkCore;
 
+var builder = WebApplication.CreateBuilder(args);
+ConfigurationManager configuration = builder.Configuration;
 // Add services to the container.
+var connectionString = builder.Configuration.GetConnectionString("LocalConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
+builder.Services.AddDbContext<MyDbContext>(options => options.UseNpgsql(connectionString));
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
