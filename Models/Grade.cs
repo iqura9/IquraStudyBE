@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace IquraStudyBE.Entities;
+namespace IquraStudyBE.Models;
 
 public partial class Grade
 {
@@ -9,9 +9,9 @@ public partial class Grade
 
     public int? ProblemId { get; set; }
 
-    public int? UserId { get; set; }
+    public string? UserId { get; set; }
 
-    public int? Grade1 { get; set; }
+    public int? GradeScore { get; set; }
 
     public DateTime? CreatedAt { get; set; }
 

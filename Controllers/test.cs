@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using IquraStudyBE.Context;
-using IquraStudyBE.Entities;
+using IquraStudyBE.Models;
 
 namespace IquraStudyBE.Controllers
 {

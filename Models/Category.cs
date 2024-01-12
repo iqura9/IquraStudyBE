@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace IquraStudyBE.Entities;
+
+namespace IquraStudyBE.Models;
 
 public partial class Category
 {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace IquraStudyBE.Entities;
+namespace IquraStudyBE.Models;
 
 public partial class Problem
 {
@@ -11,7 +11,7 @@ public partial class Problem
 
     public string? Description { get; set; }
 
-    public int? UserId { get; set; }
+    public string UserId { get; set; }
 
     public DateTime? CreatedAt { get; set; }
 
@@ -22,10 +22,6 @@ public partial class Problem
     public virtual ICollection<GroupTaskProblem> GroupTaskProblems { get; } = new List<GroupTaskProblem>();
 
     public virtual ICollection<ProblemRelatedCategory> ProblemRelatedCategories { get; } = new List<ProblemRelatedCategory>();
-
-    public virtual ICollection<SimilarProblem> SimilarProblemProblems { get; } = new List<SimilarProblem>();
-
-    public virtual ICollection<SimilarProblem> SimilarProblemRelatedProblems { get; } = new List<SimilarProblem>();
 
     public virtual ICollection<Submittion> Submittions { get; } = new List<Submittion>();
 
