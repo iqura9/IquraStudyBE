@@ -66,7 +66,8 @@ namespace IquraStudyBE.Controllers
             return new ObjectResult(new
             {
                 accessToken = new JwtSecurityTokenHandler().WriteToken(newAccessToken),
-                refreshToken = newRefreshToken
+                refreshToken = newRefreshToken,
+                expiration = newAccessToken.ValidTo
             });
         }
     }

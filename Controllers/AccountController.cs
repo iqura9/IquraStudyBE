@@ -72,9 +72,9 @@ namespace IquraStudyBE.Controllers
 
                 return Ok(new
                 {
-                    Token = new JwtSecurityTokenHandler().WriteToken(token),
-                    RefreshToken = refreshToken,
-                    Expiration = token.ValidTo
+                    accessToken = new JwtSecurityTokenHandler().WriteToken(token),
+                    refreshToken = refreshToken,
+                    expiration = token.ValidTo
                 });
             }
             return BadRequest("Invalid email or password");
