@@ -123,6 +123,7 @@ namespace IquraStudyBE.Controllers
             if (result.Succeeded)
             {
                 await _signInManager.SignInAsync(user, false);
+                await _userManager.AddToRoleAsync(user, model.Role);
                 return Ok(new { Status = "Success", Message = "User created successfully!" });
             }
 
