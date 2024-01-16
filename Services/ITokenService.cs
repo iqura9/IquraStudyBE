@@ -9,4 +9,5 @@ public interface ITokenService
     string GenerateRefreshToken();
 
     ClaimsPrincipal? GetPrincipalFromExpiredToken(string? token);
+    string GetEmailFromToken();
 }

@@ -2,8 +2,10 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using IquraStudyBE.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
+using NuGet.Configuration;
 
 namespace IquraStudyBE.Services;
 
@@ -11,9 +13,11 @@ namespace IquraStudyBE.Services;
 public class TokenServices : ITokenService
 {
     private readonly IConfiguration _configuration;
-    public TokenServices(IConfiguration configuration)
+    private readonly IHttpContextAccessor _httpContextAccessor;
+    public TokenServices(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
     {
         _configuration = configuration;
+        _httpContextAccessor = httpContextAccessor;
     }
     
     public JwtSecurityToken CreateToken(List<Claim> authClaims)
@@ -56,5 +60,36 @@ public class TokenServices : ITokenService
             throw new SecurityTokenException("Invalid Token");
 
         return principal;
+    }
+    public string GetEmailFromToken()
+    {
+        try
+        {
+            // Get the JWT token from the authorization header
+            var token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"]
+                .FirstOrDefault()?.Replace("Bearer ", "");
+
+            if (string.IsNullOrEmpty(token))
+            {
+                // Token is missing or invalid
+                return null;
+            }
+
+            // Decode the JWT token to get the claims
+            var handler = new JwtSecurityTokenHandler();
+            var jsonToken = handler.ReadToken(token) as JwtSecurityToken;
+
+            // Extract relevant user information from claims
+            var userEmail = jsonToken?.Claims.FirstOrDefault(c => c.Type == "email")?.Value;
+            
+            // Return user information
+            return userEmail;
+        }
+        catch (Exception ex)
+        {
+            // Handle exceptions (e.g., token decoding error) and log or return null
+            // You might want to implement more robust error handling in a production environment
+            return null;
+        }
     }
 }

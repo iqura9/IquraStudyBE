@@ -4,10 +4,12 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using IquraStudyBE.Classes;
 using IquraStudyBE.Context;
 using IquraStudyBE.Models;
 using IquraStudyBE.Services;
 using IquraStudyBE.ViewModal;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -135,6 +137,47 @@ namespace IquraStudyBE.Controllers
 
             return BadRequest(ModelState);
         }
+        
+        [HttpGet("GetMe")]
+        [Authorize]
+        public async Task<IActionResult> GetMe()
+        {
+            try
+            {
+                var user = await GetUserByToken();
+                return Ok(new { Message = "Success", Data = user });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "Internal Server Error", Error = ex.Message });
+            }
+        }
+
+        private async Task<UserInfo> GetUserByToken()
+        {
+            var userEmail = _tokenService.GetEmailFromToken();
+            var user = await _userManager.FindByEmailAsync(userEmail);
+            if (user == null)
+            {
+                return null;
+            }
+            
+            var userRoles = await _userManager.GetRolesAsync(user);
+            var userRole = userRoles?.FirstOrDefault();
+            
+            return new UserInfo
+            {
+                Id = user.Id,
+                UserName = user.UserName,
+                Email = user.Email,
+                Image = user.Image,
+                Description = user.Description,
+                CreatedAt = user.CreatedAt,
+                UpdatedAt = user.UpdatedAt,
+                Role = userRole,
+            };
+        }
+
         
     }
 }
