@@ -29,6 +29,15 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
+    "Debug": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "useSSL": false,
+      "dotnetRunMessages": true,
+      "applicationUrl": "http://::5120"
+    },
     "Watch_App": {
       "commandName": "Executable",
       "executablePath": "dotnet",

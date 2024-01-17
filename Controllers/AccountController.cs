@@ -54,13 +54,21 @@ namespace IquraStudyBE.Controllers
             }
 
             var user = await _userManager.FindByEmailAsync(model.Email);
+            var roles = await _userManager.GetRolesAsync(user);
             if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
             {
                 var authClaims = new List<Claim>
                 {
+                    new Claim("id", user.Id),
                     new Claim("email", user.Email),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
                 };
+                
+                foreach (var role in roles)
+                {
+                    authClaims.Add(new Claim(ClaimTypes.Role, role));
+                    authClaims.Add(new Claim("role", role));
+                }
 
                 var token = _tokenService.CreateToken(authClaims);
                 var refreshToken = _tokenService.GenerateRefreshToken();

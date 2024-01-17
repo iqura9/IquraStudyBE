@@ -48,6 +48,7 @@ namespace IquraStudyBE.Controllers
                 return BadRequest("Invalid access token or refresh token");
             var authClaims = new List<Claim>
             {
+                new Claim("id", user.Id),
                 new Claim("email", user.Email),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };

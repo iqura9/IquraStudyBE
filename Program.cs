@@ -16,10 +16,8 @@ var connectionString = builder.Configuration.GetConnectionString("LocalConnectio
 
 // AddDbContext
 builder.Services.AddDbContext<MyDbContext>(options => options.UseNpgsql(connectionString));
-builder.Services.AddDbContext<IdentityContext>(option =>
-    option.UseNpgsql(connectionString));
 
-builder.Services.AddIdentity<User,IdentityRole>().AddEntityFrameworkStores<IdentityContext>().AddDefaultTokenProviders();
+builder.Services.AddIdentity<User,IdentityRole>().AddEntityFrameworkStores<MyDbContext>().AddDefaultTokenProviders();
 
 builder.Services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
 builder.Services.AddCors(options =>

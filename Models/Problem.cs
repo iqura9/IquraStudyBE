@@ -12,6 +12,7 @@ public partial class Problem
     public string? Description { get; set; }
 
     public string UserId { get; set; }
+    public virtual User User { get; set; } = null!;
 
     public DateTime? CreatedAt { get; set; }
 
@@ -26,6 +27,6 @@ public partial class Problem
     public virtual ICollection<Submittion> Submittions { get; } = new List<Submittion>();
 
     public virtual ICollection<TestCase> TestCases { get; } = new List<TestCase>();
-
-    public virtual User? User { get; set; }
+    
+    
 }

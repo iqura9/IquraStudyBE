@@ -1,21 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using IquraStudyBE.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace IquraStudyBE.Context;
 
-public partial class MyDbContext : DbContext
+public partial class MyDbContext : IdentityDbContext<User>
 {
     public MyDbContext()
     {
+        this.ChangeTracker.LazyLoadingEnabled = false;
     }
 
     public MyDbContext(DbContextOptions<MyDbContext> options)
         : base(options)
     {
-        // Database.EnsureDeleted();
-        // Database.EnsureCreated();
+         //Database.EnsureDeleted();
+         //Database.EnsureCreated();
+        
     }
 
     public virtual DbSet<Category> Categories { get; set; }
@@ -37,15 +40,18 @@ public partial class MyDbContext : DbContext
     public virtual DbSet<Submittion> Submittions { get; set; }
 
     public virtual DbSet<TestCase> TestCases { get; set; }
-    
+
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseNpgsql("Server=localhost;Port=5433;Database=IquraStudyDB;Username= postgres;Password=root;Pooling=true;");
+    {
+        optionsBuilder.UseNpgsql("Server=localhost;Port=5433;Database=IquraStudyDB;Username= postgres;Password=root;Pooling=true;");
+        base.OnConfiguring(optionsBuilder);
+    }
 
+   
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        modelBuilder.Ignore<User>();
+        //modelBuilder.Ignore<User>();
     }
 }

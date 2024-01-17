@@ -92,4 +92,35 @@ public class TokenServices : ITokenService
             return null;
         }
     }
+    public string GetUserIdFromToken()
+    {
+        try
+        {
+            // Get the JWT token from the authorization header
+            var token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"]
+                .FirstOrDefault()?.Replace("Bearer ", "");
+
+            if (string.IsNullOrEmpty(token))
+            {
+                // Token is missing or invalid
+                return null;
+            }
+
+            // Decode the JWT token to get the claims
+            var handler = new JwtSecurityTokenHandler();
+            var jsonToken = handler.ReadToken(token) as JwtSecurityToken;
+
+            // Extract relevant user information from claims
+            var userId = jsonToken?.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
+            
+            // Return user information
+            return userId;
+        }
+        catch (Exception ex)
+        {
+            // Handle exceptions (e.g., token decoding error) and log or return null
+            // You might want to implement more robust error handling in a production environment
+            return null;
+        }
+    }
 }

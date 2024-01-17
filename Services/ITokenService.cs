@@ -10,4 +10,5 @@ public interface ITokenService
 
     ClaimsPrincipal? GetPrincipalFromExpiredToken(string? token);
     string GetEmailFromToken();
+    string GetUserIdFromToken();
 }
