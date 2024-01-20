@@ -16,9 +16,8 @@ public partial class MyDbContext : IdentityDbContext<User>
     public MyDbContext(DbContextOptions<MyDbContext> options)
         : base(options)
     {
-         //Database.EnsureDeleted();
-         //Database.EnsureCreated();
-        
+         // Database.EnsureDeleted();
+         // Database.EnsureCreated();
     }
 
     public virtual DbSet<Category> Categories { get; set; }
@@ -52,6 +51,5 @@ public partial class MyDbContext : IdentityDbContext<User>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        //modelBuilder.Ignore<User>();
     }
 }

@@ -9,13 +9,11 @@ public partial class Group
     public int Id { get; set; }
 
     public string? Name { get; set; }
-    [ForeignKey("User")]
+    [ForeignKey("CreatedByUser")]
     public string CreatedByUserId { get; set; }
-
     public DateTime? CreatedAt { get; set; }
 
-    public bool? IsArchived { get; set; }
-    [ForeignKey("User")]
+    public bool? IsArchived { get; set; } = false;
     public virtual User? CreatedByUser { get; set; }
 
     public virtual ICollection<GroupPerson> GroupPeople { get; } = new List<GroupPerson>();
