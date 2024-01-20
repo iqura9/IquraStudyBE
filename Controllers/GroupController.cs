@@ -27,14 +27,40 @@ namespace IquraStudyBE.Controllers
 
         // GET: api/Group
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Group>>> GetGroups()
+        public async Task<ActionResult<IEnumerable<Group>>> GetGroups([FromQuery] bool myGroups = false)
         {
-          if (_context.Groups == null)
-          {
-              return NotFound();
-          }
-            return await _context.Groups.Include( g => g.CreatedByUser).ToListAsync();
+            IQueryable<Group> query = _context.Groups.Include(g => g.CreatedByUser);
+            var userId = _tokenService.GetUserIdFromToken();
+           
+            if (myGroups)
+            {
+                if (User.IsInRole("Teacher") && !string.IsNullOrEmpty(userId))
+                {
+                    // Apply filter1: return only my groups (created by the teacher)
+                    query = query.Where(g => g.CreatedByUserId == userId);
+                }
+                else if (User.IsInRole("Student") && !string.IsNullOrEmpty(userId))
+                {
+                    // Apply filter2: return only groups that the student is enrolled in
+                    query = query.Where(g => g.GroupPeople.Any(gp => gp.UserId == userId));
+                }
+                else
+                {
+                    // Handle unauthorized access or invalid user ID
+                    return Unauthorized();
+                }
+            }
+            
+            var groups = await query.ToListAsync();
+
+            if (groups == null)
+            {
+                return NotFound();
+            }
+
+            return groups;
         }
+
 
         // GET: api/Group/5
         [HttpGet("{id}")]
