@@ -70,14 +70,16 @@ namespace IquraStudyBE.Controllers
           {
               return NotFound();
           }
-            var @group = await _context.Groups.FindAsync(id);
+          var group = await _context.Groups
+              .Include(g => g.CreatedByUser)
+              .FirstOrDefaultAsync(g => g.Id == id);
 
-            if (@group == null)
+            if (group == null)
             {
                 return NotFound();
             }
 
-            return @group;
+            return group;
         }
 
         // PUT: api/Group/5
@@ -110,7 +112,51 @@ namespace IquraStudyBE.Controllers
 
             return NoContent();
         }
+        
+        // PATCH: api/Group/5
+        [HttpPatch("{id}")]
+        [Authorize(Roles = "Teacher")]
+        public async Task<IActionResult> PatchGroupName(int id, [FromBody] CreateGroupDTO group)
+        {
+            var existingGroup = await _context.Groups.FindAsync(id);
 
+            if (existingGroup == null)
+            {
+                return NotFound();
+            }
+            var teacherId = _tokenService.GetUserIdFromToken();
+            if (existingGroup.CreatedByUserId != teacherId)
+            {
+                return Forbid();
+            }
+            // Update only the Name property if it's provided in the request
+            if (group.Name != null)
+            {
+                existingGroup.Name = group.Name;
+            }
+
+            // Save changes to the database
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!GroupExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+        
+        
         // POST: api/Group
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
@@ -136,19 +182,27 @@ namespace IquraStudyBE.Controllers
 
         // DELETE: api/Group/5
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> DeleteGroup(int id)
         {
             if (_context.Groups == null)
             {
                 return NotFound();
             }
-            var @group = await _context.Groups.FindAsync(id);
-            if (@group == null)
+            var group = await _context.Groups.FindAsync(id);
+
+            if (group == null)
             {
                 return NotFound();
             }
-
-            _context.Groups.Remove(@group);
+            
+            var teacherId = _tokenService.GetUserIdFromToken();
+            if (group.CreatedByUserId != teacherId)
+            {
+                return Forbid();
+            }
+            
+            _context.Groups.Remove(group);
             await _context.SaveChangesAsync();
 
             return NoContent();
