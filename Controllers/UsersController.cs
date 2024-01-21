@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using IquraStudyBE.Classes;
 using Microsoft.AspNetCore.Http;
@@ -10,55 +11,63 @@ using IquraStudyBE.Context;
 using IquraStudyBE.Models;
 using IquraStudyBE.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace IquraStudyBE.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class GroupController : ControllerBase
+    public class UsersController : ControllerBase
     {
         private readonly MyDbContext _context;
         private readonly ITokenService _tokenService;
-        public GroupController(MyDbContext context, ITokenService tokenService)
+        private readonly UserManager<User> _userManager;
+        public UsersController(MyDbContext context, ITokenService tokenService, UserManager<User> userManager)
         {
             _context = context;
             _tokenService = tokenService;
+            _userManager = userManager;
         }
 
-        // GET: api/Group
+        // GET: api/Users
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Group>>> GetGroups([FromQuery] bool myGroups = false)
+        public async Task<ActionResult<IEnumerable<UserInfo>>> GetUsers([FromQuery] string? userRole)
         {
-            IQueryable<Group> query = _context.Groups.Include(g => g.CreatedByUser);
-            var userId = _tokenService.GetUserIdFromToken();
-            
-            if (myGroups)
-            {
-                if (User.IsInRole("Teacher") && !string.IsNullOrEmpty(userId))
-                {
-                    // Apply filter1: return only my groups (created by the teacher)
-                    query = query.Where(g => g.CreatedByUserId == userId);
-                }
-                else if (User.IsInRole("Student") && !string.IsNullOrEmpty(userId))
-                {
-                    // Apply filter2: return only groups that the student is enrolled in
-                    query = query.Where(g => g.GroupPeople.Any(gp => gp.UserId == userId));
-                }
-                else
-                {
-                    // Handle unauthorized access or invalid user ID
-                    return Unauthorized();
-                }
-            }
-            
-            var groups = await query.ToListAsync();
+            var users = await _context.Users.ToListAsync();
 
-            if (groups == null)
+            if (users == null)
             {
                 return NotFound();
             }
 
-            return groups;
+            var usersInfo = new List<UserInfo>();
+
+            foreach (var user in users)
+            {
+                // Retrieve roles for each user
+                var userRoles = await _userManager.GetRolesAsync(user);
+        
+                // Add roles to the user's Claims collection
+                if (string.IsNullOrEmpty(userRole) || userRoles.Contains(userRole))
+                {
+                    var userInfo = new UserInfo
+                    {
+                        Id = user.Id,
+                        UserName = user.UserName,
+                        Email = user.Email,
+                        Image = user.Image,
+                        Description = user.Description,
+                        CreatedAt = user.CreatedAt,
+                        UpdatedAt = user.UpdatedAt,
+                        Role = string.Join(",", userRoles)
+                    };
+                    usersInfo.Add(userInfo);
+                }
+               
+            }
+
+            
+            return usersInfo;
         }
 
 
