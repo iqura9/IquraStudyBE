@@ -39,7 +39,10 @@ public partial class MyDbContext : IdentityDbContext<User>
     public virtual DbSet<Submittion> Submittions { get; set; }
 
     public virtual DbSet<TestCase> TestCases { get; set; }
-
+    
+    public virtual DbSet<Quiz> Quizzes { get; set; }
+    public virtual DbSet<Question> Questions { get; set; }
+    public virtual DbSet<Answer> Answers { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

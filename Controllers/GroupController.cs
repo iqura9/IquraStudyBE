@@ -42,7 +42,7 @@ namespace IquraStudyBE.Controllers
                 else if (User.IsInRole("Student") && !string.IsNullOrEmpty(userId))
                 {
                     // Apply filter2: return only groups that the student is enrolled in
-                    query = query.Where(g => g.GroupPeople.Any(gp => gp.UserId == userId));
+                    query = query.Where(g => g.GroupPeople.Any(gp => gp.UserId == userId && gp.UserStatus == UserStatus.Success));
                 }
                 else
                 {
@@ -64,21 +64,26 @@ namespace IquraStudyBE.Controllers
 
         // GET: api/Group/5
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<Group>> GetGroup(int id)
         {
           if (_context.Groups == null)
           {
               return NotFound();
           }
+          var userId = _tokenService.GetUserIdFromToken();
           var group = await _context.Groups
               .Include(g => g.CreatedByUser)
+              .Include(g => g.GroupPeople) 
+              .Where(g => g.CreatedByUserId == userId || g.GroupPeople.Any(gp => gp.UserId == userId))
               .FirstOrDefaultAsync(g => g.Id == id);
 
-            if (group == null)
+          if (group == null)
             {
                 return NotFound();
             }
-
+    
+            
             return group;
         }
 
