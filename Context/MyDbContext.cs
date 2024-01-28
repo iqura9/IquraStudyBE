@@ -53,6 +53,11 @@ public partial class MyDbContext : IdentityDbContext<User>
    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Question>()
+            .HasMany(q => q.Answers)
+            .WithOne(a => a.Question)
+            .OnDelete(DeleteBehavior.Cascade);
+        
         base.OnModelCreating(modelBuilder);
     }
 }

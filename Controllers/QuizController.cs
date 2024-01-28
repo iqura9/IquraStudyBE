@@ -34,7 +34,9 @@ namespace IquraStudyBE.Controllers
           {
               return NotFound();
           }
-            return await _context.Quizzes.ToListAsync();
+            return await _context.Quizzes
+                .Include(q => q.CreatedByUser)
+                .ToListAsync();
         }
 
         // GET: api/Quiz/5
@@ -45,7 +47,11 @@ namespace IquraStudyBE.Controllers
           {
               return NotFound();
           }
-            var quiz = await _context.Quizzes.FindAsync(id);
+            var quiz = await _context.Quizzes
+                .Include(q => q.CreatedByUser)
+                .Include(q => q.Questions)
+                    .ThenInclude(question => question.Answers)
+                .FirstOrDefaultAsync(q => q.Id == id);
 
             if (quiz == null)
             {

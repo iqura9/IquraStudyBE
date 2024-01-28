@@ -10,6 +10,8 @@ public partial class Question
     public string Title { get; set; }
     public int QuizId { get; set; }
     public DateTime? CreatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
+    
     public virtual Quiz? Quiz { get; set; }
-    public virtual ICollection<Answer> Answers { get; } = new List<Answer>();
+    public virtual ICollection<Answer> Answers { get; set; } = new List<Answer>();
 }
