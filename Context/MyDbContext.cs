@@ -31,7 +31,7 @@ public partial class MyDbContext : IdentityDbContext<User>
     public virtual DbSet<GroupTask> GroupTasks { get; set; }
 
     public virtual DbSet<GroupTaskProblem> GroupTaskProblems { get; set; }
-
+    public virtual DbSet<GroupTaskQuiz> GroupTaskQuizzes { get; set; }
     public virtual DbSet<Problem> Problems { get; set; }
 
     public virtual DbSet<ProblemRelatedCategory> ProblemRelatedCategories { get; set; }
@@ -53,6 +53,11 @@ public partial class MyDbContext : IdentityDbContext<User>
    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Quiz>()
+            .HasMany(q => q.Questions)
+            .WithOne(q => q.Quiz)
+            .OnDelete(DeleteBehavior.Cascade);
+        
         modelBuilder.Entity<Question>()
             .HasMany(q => q.Answers)
             .WithOne(a => a.Question)

@@ -5,6 +5,13 @@ public class CreateQuizDto
     public string Title { get; set; }
 }
 
+public class CreateQuizTaskDto
+{
+    
+    public int GroupTasksId { get; set; }
+    public int[] QuizIds { get; set; }
+}
+
 public class CreateQuestionDto
 {
     public string Title { get; set; }

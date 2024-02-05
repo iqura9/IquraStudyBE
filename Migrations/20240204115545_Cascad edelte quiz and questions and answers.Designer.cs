@@ -3,6 +3,7 @@ using System;
 using IquraStudyBE.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace IquraStudyBE.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    partial class MyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240204115545_Cascad edelte quiz and questions and answers")]
+    partial class Cascadedeltequizandquestionsandanswers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -196,29 +199,6 @@ namespace IquraStudyBE.Migrations
                     b.HasIndex("ProblemId");
 
                     b.ToTable("GroupTaskProblems");
-                });
-
-            modelBuilder.Entity("IquraStudyBE.Models.GroupTaskQuiz", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("GroupTaskId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("QuizId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GroupTaskId");
-
-                    b.HasIndex("QuizId");
-
-                    b.ToTable("GroupTaskQuizzes");
                 });
 
             modelBuilder.Entity("IquraStudyBE.Models.Problem", b =>
@@ -680,25 +660,6 @@ namespace IquraStudyBE.Migrations
                     b.Navigation("Problem");
                 });
 
-            modelBuilder.Entity("IquraStudyBE.Models.GroupTaskQuiz", b =>
-                {
-                    b.HasOne("IquraStudyBE.Models.GroupTask", "GroupTask")
-                        .WithMany("GroupTaskQuizzes")
-                        .HasForeignKey("GroupTaskId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("IquraStudyBE.Models.Quiz", "Quiz")
-                        .WithMany()
-                        .HasForeignKey("QuizId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("GroupTask");
-
-                    b.Navigation("Quiz");
-                });
-
             modelBuilder.Entity("IquraStudyBE.Models.Problem", b =>
                 {
                     b.HasOne("IquraStudyBE.Models.User", "User")
@@ -837,8 +798,6 @@ namespace IquraStudyBE.Migrations
             modelBuilder.Entity("IquraStudyBE.Models.GroupTask", b =>
                 {
                     b.Navigation("GroupTaskProblems");
-
-                    b.Navigation("GroupTaskQuizzes");
                 });
 
             modelBuilder.Entity("IquraStudyBE.Models.Problem", b =>

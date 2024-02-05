@@ -115,6 +115,43 @@ namespace IquraStudyBE.Controllers
 
             return CreatedAtAction("GetQuiz", new { id = quiz.Id }, quiz);
         }
+        
+        // POST: api/QuizTask
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost("QuizTask")]
+        [Authorize(Roles = "Teacher")]
+        public async Task<ActionResult> PostQuizTasks([FromBody] CreateQuizTaskDto data)
+        {
+            if (_context.Quizzes == null)
+            {
+                return Problem("Entity set 'MyDbContext.Quizzes' is null.");
+            }
+
+            if (data.QuizIds == null || data.QuizIds.Length == 0)
+            {
+                return BadRequest("QuizIds array is null or empty.");
+            }
+
+            foreach (var quizId in data.QuizIds)
+            {
+                // Check if a GroupTaskQuiz with the same QuizId and GroupTaskId already exists
+                if (!_context.GroupTaskQuizzes.Any(gtq => gtq.QuizId == quizId && gtq.GroupTaskId == data.GroupTasksId))
+                {
+                    var quiz = new GroupTaskQuiz()
+                    {
+                        GroupTaskId = data.GroupTasksId,
+                        QuizId = quizId,
+                    };
+
+                    _context.GroupTaskQuizzes.Add(quiz);
+                }
+            }
+
+            await _context.SaveChangesAsync();
+
+            return Ok("Successfully added quizzes to task");
+        }
+
 
         // DELETE: api/Quiz/5
         [HttpDelete("{id}")]

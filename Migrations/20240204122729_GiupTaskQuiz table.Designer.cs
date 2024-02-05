@@ -3,6 +3,7 @@ using System;
 using IquraStudyBE.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace IquraStudyBE.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    partial class MyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240204122729_GiupTaskQuiz table")]
+    partial class GiupTaskQuiztable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -206,10 +209,10 @@ namespace IquraStudyBE.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("GroupTaskId")
+                    b.Property<int?>("GroupTaskId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("QuizId")
+                    b.Property<int?>("QuizId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -218,7 +221,7 @@ namespace IquraStudyBE.Migrations
 
                     b.HasIndex("QuizId");
 
-                    b.ToTable("GroupTaskQuizzes");
+                    b.ToTable("GroupTaskQuiz");
                 });
 
             modelBuilder.Entity("IquraStudyBE.Models.Problem", b =>
@@ -684,15 +687,11 @@ namespace IquraStudyBE.Migrations
                 {
                     b.HasOne("IquraStudyBE.Models.GroupTask", "GroupTask")
                         .WithMany("GroupTaskQuizzes")
-                        .HasForeignKey("GroupTaskId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("GroupTaskId");
 
                     b.HasOne("IquraStudyBE.Models.Quiz", "Quiz")
                         .WithMany()
-                        .HasForeignKey("QuizId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("QuizId");
 
                     b.Navigation("GroupTask");
 

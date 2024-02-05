@@ -46,7 +46,7 @@ namespace IquraStudyBE.Controllers
               return NotFound();
           }
 
-          List<GroupTask> groupTask = await _context.GroupTasks.Where(gt => gt.GroupId == id).ToListAsync();
+          List<GroupTask> groupTask = await _context.GroupTasks.Where(gt => gt.GroupId == id).Include(t => t.GroupTaskQuizzes).ThenInclude(t => t.Quiz).ToListAsync();
             
             if (groupTask == null)
             {
