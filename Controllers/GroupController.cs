@@ -86,6 +86,30 @@ namespace IquraStudyBE.Controllers
             
             return group;
         }
+        
+        // GET: api/Group/CheckInvitation/5
+        [HttpGet("CheckInvitation/{id}")]
+        [Authorize]
+        public async Task<ActionResult<Group>> CheckInvitation(int id)
+        {
+            if (_context.Groups == null)
+            {
+                return NotFound();
+            }
+            var userId = _tokenService.GetUserIdFromToken();
+            var group = await _context.Groups
+                .Include(g => g.CreatedByUser)
+                .Include(g => g.GroupPeople)
+                .FirstOrDefaultAsync(g => g.Id == id);
+
+            if (group == null)
+            {
+                return NotFound();
+            }
+    
+            
+            return group;
+        }
 
         // PUT: api/Group/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
