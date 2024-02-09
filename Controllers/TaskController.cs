@@ -55,6 +55,30 @@ namespace IquraStudyBE.Controllers
 
             return groupTask;
         }
+        
+        // GET: api/Task/Quiz?taskId=5
+        [HttpGet("Quiz")]
+        public async Task<ActionResult<GroupTask>> GetGroupTaskQuiz([FromQuery] int taskId)
+        {
+            if (_context.GroupTasks == null)
+            {
+                return NotFound();
+            }
+
+            var groupTask = await _context.GroupTasks
+                .Where(gt => gt.Id == taskId)
+                .Include(t => t.GroupTaskQuizzes)
+                    .ThenInclude(t => t.Quiz)
+                .Include(qt => qt.CreatedByUser)
+                .FirstOrDefaultAsync();
+            
+            if (groupTask == null)
+            {
+                return NotFound();
+            }
+
+            return groupTask;
+        }
 
         // PUT: api/Task/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

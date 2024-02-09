@@ -10,9 +10,10 @@ public partial class GroupTask
     public string Title { get; set; }
     public string? Description { get; set; }
     public int? GroupId { get; set; }
-    [ForeignKey("User")]
+    [ForeignKey("CreatedByUser")]
     public string? CreateByUserId { get; set; }
     public virtual Group? Group { get; set; }
+    public virtual User? CreatedByUser { get; set; }
     public virtual ICollection<GroupTaskProblem> GroupTaskProblems { get; } = new List<GroupTaskProblem>();
     public virtual ICollection<GroupTaskQuiz> GroupTaskQuizzes { get; } = new List<GroupTaskQuiz>();
 

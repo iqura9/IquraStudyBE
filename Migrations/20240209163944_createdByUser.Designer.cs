@@ -3,6 +3,7 @@ using System;
 using IquraStudyBE.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace IquraStudyBE.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    partial class MyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240209163944_createdByUser")]
+    partial class createdByUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -158,6 +161,9 @@ namespace IquraStudyBE.Migrations
                     b.Property<string>("CreateByUserId")
                         .HasColumnType("text");
 
+                    b.Property<string>("CreatedByUserId")
+                        .HasColumnType("text");
+
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
@@ -170,7 +176,7 @@ namespace IquraStudyBE.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreateByUserId");
+                    b.HasIndex("CreatedByUserId");
 
                     b.HasIndex("GroupId");
 
@@ -662,7 +668,7 @@ namespace IquraStudyBE.Migrations
                 {
                     b.HasOne("IquraStudyBE.Models.User", "CreatedByUser")
                         .WithMany("GroupTasks")
-                        .HasForeignKey("CreateByUserId");
+                        .HasForeignKey("CreatedByUserId");
 
                     b.HasOne("IquraStudyBE.Models.Group", "Group")
                         .WithMany("GroupTasks")
