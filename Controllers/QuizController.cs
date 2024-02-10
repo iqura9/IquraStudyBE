@@ -61,6 +61,50 @@ namespace IquraStudyBE.Controllers
             return quiz;
         }
 
+        // GET: api/Quiz/WithoutAnswers/5
+        [HttpGet("WithoutAnswers/{id}")]
+        public async Task<ActionResult<Quiz>> GetQuizWithoutAnswers(int id)
+        {
+            if (_context.Quizzes == null)
+            {
+                return NotFound();
+            }
+            var quiz = await _context.Quizzes
+                .Include(q => q.Questions)
+                .ThenInclude(question => question.Answers)
+                .Where(q => q.Id == id)
+                .Select(q => new Quiz
+                {
+                    Id = q.Id,
+                    CreatedAt = q.CreatedAt,
+                    CreatedByUser = q.CreatedByUser,
+                    CreatedByUserId = q.CreatedByUserId,
+                    Title = q.Title,
+                    Questions = q.Questions.Select(question => new Question
+                    {
+                        Id = question.Id,
+                        CreatedAt = question.CreatedAt,
+                        UpdatedAt = question.UpdatedAt,
+                        
+                        QuizId = question.QuizId,
+                        Title = question.Title,
+                        Answers = question.Answers.Select(answer => new Answer
+                        {
+                            Id = answer.Id,
+                            Title = answer.Title,
+                        }).ToList()
+                    }).ToList()
+                })
+                .FirstOrDefaultAsync();
+
+            if (quiz == null)
+            {
+                return NotFound();
+            }
+
+            return quiz;
+        }
+        
         // PUT: api/Quiz/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

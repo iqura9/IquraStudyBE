@@ -12,5 +12,5 @@ public partial class Quiz
     public string CreatedByUserId { get; set; }
     public DateTime? CreatedAt { get; set; }
     public virtual User? CreatedByUser { get; set; }
-    public virtual ICollection<Question> Questions { get; } = new List<Question>();
+    public virtual ICollection<Question> Questions { get; set; } = new List<Question>();
 }
