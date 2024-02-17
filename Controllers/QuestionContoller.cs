@@ -146,6 +146,7 @@ namespace IquraStudyBE.Controllers
                     QuizId = QuizId,
                     CreatedAt = DateTime.UtcNow,
                     Title = data.Title,
+                    isMultiSelect = data.Answers.Count( a => a.IsCorrect) > 1,
                     Answers = data.Answers.Select(answerDto => new Answer
                     {
                         Title = answerDto.Title,
