@@ -85,7 +85,7 @@ namespace IquraStudyBE.Controllers
                         Id = question.Id,
                         CreatedAt = question.CreatedAt,
                         UpdatedAt = question.UpdatedAt,
-                        
+                        isMultiSelect = question.isMultiSelect,
                         QuizId = question.QuizId,
                         Title = question.Title,
                         Answers = question.Answers.Select(answer => new Answer
@@ -159,6 +159,46 @@ namespace IquraStudyBE.Controllers
 
             return CreatedAtAction("GetQuiz", new { id = quiz.Id }, quiz);
         }
+        
+        // POST: api/Quiz/verify
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost("verify")]
+        public async Task<ActionResult<double>> VerifyQuizAnswers(QuizVerificationRequest request)
+        {
+            var quiz = await _context.Quizzes
+                .Include(q => q.Questions)
+                .ThenInclude(question => question.Answers)
+                .FirstOrDefaultAsync(q => q.Id == request.QuizId);
+
+            if (quiz == null)
+            {
+                return NotFound();
+            }
+            
+            double score = CalculateScore(quiz, request.Questions);
+
+            return score;
+        }
+
+        private double CalculateScore(Quiz quiz, List<QuestionAnswer> userAnswers)
+        {
+            int totalQuestions = quiz.Questions.Count;
+            int correctAnswers = 0;
+
+            foreach (var userAnswer in userAnswers)
+            {
+                var question = quiz.Questions.FirstOrDefault(q => q.Id == userAnswer.QuestionId);
+                if (question != null && userAnswer.Answers.OrderBy(a => a).SequenceEqual(question.Answers.Where(a => a.IsCorrect).Select(s => s.Id).OrderBy(a => a)))
+                {
+                    correctAnswers++;
+                }
+            }
+
+            // Calculate the score as a percentage
+            double score = (double)correctAnswers / totalQuestions * 100;
+            return Math.Round(score, 2);
+        }
+     
         
         // POST: api/QuizTask
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

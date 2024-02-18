@@ -43,3 +43,21 @@ public class UpdateAnswerDto
     public string Title { get; set; }
     public bool IsCorrect { get; set; } = false;
 }
+
+
+public class QuizVerificationRequest
+{
+    public int QuizId { get; set; }
+    public List<QuestionAnswer> Questions { get; set; }
+}
+
+public class QuestionAnswer
+{
+    public int QuestionId { get; set; }
+    public List<int> Answers { get; set; }
+}
+
+public class QuizVerificationResponse
+{
+    public double Result { get; set; }
+}

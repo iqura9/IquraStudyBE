@@ -77,7 +77,7 @@ namespace IquraStudyBE.Controllers
 
             // Update properties of the existing question
             existingQuestion.Title = updatedQuestion.Title;
-
+            existingQuestion.isMultiSelect = updatedQuestion.Answers.Count(a => a.IsCorrect) > 1;
             // Update or add new answers
             foreach (var updatedAnswer in updatedQuestion.Answers)
             {
