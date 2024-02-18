@@ -48,6 +48,7 @@ public class UpdateAnswerDto
 public class QuizVerificationRequest
 {
     public int QuizId { get; set; }
+    public int TaskId { get; set; }
     public List<QuestionAnswer> Questions { get; set; }
 }
 

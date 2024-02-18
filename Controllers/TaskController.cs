@@ -58,20 +58,46 @@ namespace IquraStudyBE.Controllers
         
         // GET: api/Task/Quiz?taskId=5
         [HttpGet("Quiz")]
-        public async Task<ActionResult<GroupTask>> GetGroupTaskQuiz([FromQuery] int taskId)
+        [Authorize]
+        public async Task<ActionResult<GetGroupTaskQuiz>> GetGroupTaskQuiz([FromQuery] int taskId)
         {
             if (_context.GroupTasks == null)
             {
                 return NotFound();
             }
 
+            var myUserId = _tokenService.GetUserIdFromToken();
+            
             var groupTask = await _context.GroupTasks
                 .Where(gt => gt.Id == taskId)
                 .Include(t => t.GroupTaskQuizzes)
                     .ThenInclude(t => t.Quiz)
                 .Include(qt => qt.CreatedByUser)
+                .Include(qt => qt.QuizSubmittions.Where(qs => qs.UserId == myUserId))
+                .Select(qt => new GetGroupTaskQuiz
+                {
+                    Id = qt.Id,
+                    CreateByUserId = qt.CreateByUserId,
+                    CreatedByUser = qt.CreatedByUser,
+                    Description = qt.Description,
+                    GroupId = qt.GroupId,
+                    GroupTaskQuizzes = qt.GroupTaskQuizzes.Select(qtq => new GroupTaskQuizzesDto
+                    {
+                        Id = qtq.Id,
+                        GroupTaskId = qtq.GroupTaskId,
+                        QuizId = qtq.QuizId,
+                        Quiz = qtq.Quiz,
+                        Score = qt.QuizSubmittions.Where(qs => qs.UserId == myUserId && qs.QuizId == qtq.QuizId && qs.GroupTaskId == qt.Id).FirstOrDefault().Score
+                    }).ToList(),
+                    AverageScore = qt.QuizSubmittions
+                        .Where(qs => qs.UserId == myUserId && qs.GroupTaskId == qt.Id)
+                        .Select(qs => (double?)qs.Score)
+                        .Average() ?? 0.0,
+                    Title = qt.Title,
+                })
                 .FirstOrDefaultAsync();
-            
+                
+
             if (groupTask == null)
             {
                 return NotFound();

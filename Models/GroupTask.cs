@@ -16,5 +16,7 @@ public partial class GroupTask
     public virtual User? CreatedByUser { get; set; }
     public virtual ICollection<GroupTaskProblem> GroupTaskProblems { get; } = new List<GroupTaskProblem>();
     public virtual ICollection<GroupTaskQuiz> GroupTaskQuizzes { get; } = new List<GroupTaskQuiz>();
+    public virtual ICollection<QuizSubmittion> QuizSubmittions { get; } = new List<QuizSubmittion>();
+
 
 }

@@ -168,7 +168,7 @@ namespace IquraStudyBE.Controllers
         {
             var userId = _tokenService.GetUserIdFromToken();
             var quizSubmit =
-                await _context.QuizSubmittions.Where(quiz => quiz.QuizId == request.QuizId && quiz.UserId == userId).FirstOrDefaultAsync();
+                await _context.QuizSubmittions.Where(quiz => quiz.QuizId == request.QuizId && quiz.UserId == userId && quiz.GroupTaskId == request.TaskId).FirstOrDefaultAsync();
            
             if (quizSubmit != null)
             {
@@ -189,6 +189,8 @@ namespace IquraStudyBE.Controllers
             var quizSubmition = new QuizSubmittion
                 {
                     QuizId = request.QuizId,
+                    GroupTaskId = request.TaskId,
+                    Score = score,
                     UserId = userId,
                     CreatedAt = DateTime.UtcNow,
                 };
