@@ -163,20 +163,37 @@ namespace IquraStudyBE.Controllers
         // POST: api/Quiz/verify
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost("verify")]
+        [Authorize]
         public async Task<ActionResult<double>> VerifyQuizAnswers(QuizVerificationRequest request)
         {
+            var userId = _tokenService.GetUserIdFromToken();
+            var quizSubmit =
+                await _context.QuizSubmittions.Where(quiz => quiz.QuizId == request.QuizId && quiz.UserId == userId).FirstOrDefaultAsync();
+           
+            if (quizSubmit != null)
+            {
+                return Problem("User cannot take a test more than once.");
+            }
+            
             var quiz = await _context.Quizzes
                 .Include(q => q.Questions)
                 .ThenInclude(question => question.Answers)
                 .FirstOrDefaultAsync(q => q.Id == request.QuizId);
-
+        
             if (quiz == null)
             {
                 return NotFound();
             }
             
             double score = CalculateScore(quiz, request.Questions);
-
+            var quizSubmition = new QuizSubmittion
+                {
+                    QuizId = request.QuizId,
+                    UserId = userId,
+                    CreatedAt = DateTime.UtcNow,
+                };
+            _context.QuizSubmittions.Add(quizSubmition); 
+            await _context.SaveChangesAsync(); 
             return score;
         }
 
