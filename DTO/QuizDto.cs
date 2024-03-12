@@ -62,3 +62,8 @@ public class QuizVerificationResponse
 {
     public double Result { get; set; }
 }
+
+public class UpdateQuizTitle
+{
+    public string Title { get; set; }
+}

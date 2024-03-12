@@ -34,8 +34,10 @@ namespace IquraStudyBE.Controllers
           {
               return NotFound();
           }
-            return await _context.Quizzes
-                .Include(q => q.CreatedByUser)
+
+          var userId = _tokenService.GetUserIdFromToken();
+          return await _context.Quizzes
+                .Where(q => q.CreatedByUserId == userId).Include(q => q.CreatedByUser)
                 .ToListAsync();
         }
 
@@ -136,6 +138,49 @@ namespace IquraStudyBE.Controllers
             return NoContent();
         }
 
+        // PATCH: api/Quiz/5
+        [HttpPatch("{id}")]
+        [Authorize(Roles = "Teacher")]
+        public async Task<IActionResult> PatchGroupName(int id, [FromBody] UpdateQuizTitle quiz)
+        {
+            var existingQuiz = await _context.Quizzes.FindAsync(id);
+
+            if (existingQuiz == null)
+            {
+                return NotFound();
+            }
+            var teacherId = _tokenService.GetUserIdFromToken();
+            if (existingQuiz.CreatedByUserId != teacherId)
+            {
+                return Forbid();
+            }
+            // Update only the Name property if it's provided in the request
+            if (quiz.Title != null)
+            {
+                existingQuiz.Title = quiz.Title;
+            }
+
+            // Save changes to the database
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!QuizExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+        
+        
         // POST: api/Quiz
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]

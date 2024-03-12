@@ -27,7 +27,7 @@ namespace IquraStudyBE.Controllers
 
         // GET: api/Group
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Group>>> GetGroups([FromQuery] bool myGroups = false)
+        public async Task<ActionResult<IEnumerable<Group>>> GetGroups([FromQuery] bool myGroups = true)
         {
             IQueryable<Group> query = _context.Groups.Include(g => g.CreatedByUser);
             var userId = _tokenService.GetUserIdFromToken();
