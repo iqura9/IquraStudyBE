@@ -35,4 +35,12 @@
       <Folder Include="Migrations" />
     </ItemGroup>
 
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Tests\bin\Debug\net7.0\Tests.deps.json" />
+      <_ContentIncludedByDefault Remove="Tests\bin\Debug\net7.0\Tests.runtimeconfig.json" />
+      <_ContentIncludedByDefault Remove="Tests\obj\project.assets.json" />
+      <_ContentIncludedByDefault Remove="Tests\obj\project.packagespec.json" />
+      <_ContentIncludedByDefault Remove="Tests\obj\Tests.csproj.nuget.dgspec.json" />
+    </ItemGroup>
+
 </Project>
