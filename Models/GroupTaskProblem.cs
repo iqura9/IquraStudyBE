@@ -11,7 +11,7 @@ public partial class GroupTaskProblem
 
     public int? ProblemId { get; set; }
     
-    public DateTime? CreatedAt { get; set; } = DateTime.Now;
+    public DateTime? CreatedAt { get; set; } = DateTime.UtcNow;
 
     public virtual GroupTask? GroupTask { get; set; }
 

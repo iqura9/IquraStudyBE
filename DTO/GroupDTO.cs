@@ -34,4 +34,5 @@ public class GetGroupTaskQuiz
     public List<GroupTaskQuizzesDto> GroupTaskQuizzes { get; set; }
     public string Title { get; set; }
     public double? AverageScore { get; set; }
+    public DateTime? CreatedAt { get; set; }
 }

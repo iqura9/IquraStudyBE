@@ -25,5 +25,5 @@ public partial class GroupPerson
 
     public virtual User? User { get; set; }
     
-    public DateTime? CreatedAt { get; set; } = DateTime.Now;
+    public DateTime? CreatedAt { get; set; } = DateTime.UtcNow;
 }

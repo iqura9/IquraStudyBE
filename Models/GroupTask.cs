@@ -13,7 +13,7 @@ public partial class GroupTask
     [ForeignKey("CreatedByUser")]
     public string? CreateByUserId { get; set; }
     
-    public DateTime? CreatedAt { get; set; } = DateTime.Now;
+    public DateTime? CreatedAt { get; set; } = DateTime.UtcNow;
     
     public virtual Group? Group { get; set; }
     public virtual User? CreatedByUser { get; set; }

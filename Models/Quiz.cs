@@ -10,7 +10,7 @@ public partial class Quiz
     public string Title { get; set; }
     [ForeignKey("CreatedByUser")]
     public string CreatedByUserId { get; set; }
-    public DateTime? CreatedAt { get; set; } = DateTime.Now;
+    public DateTime? CreatedAt { get; set; } = DateTime.UtcNow;
     public virtual User? CreatedByUser { get; set; }
     public virtual ICollection<Question> Questions { get; set; } = new List<Question>();
 }

@@ -15,5 +15,5 @@ public partial class GroupTaskQuiz
 
     public virtual Quiz? Quiz { get; set; }
     
-    public DateTime? CreatedAt { get; set; } = DateTime.Now;
+    public DateTime? CreatedAt { get; set; } = DateTime.UtcNow;
 }

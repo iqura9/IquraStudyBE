@@ -132,6 +132,7 @@ namespace IquraStudyBE.Controllers
                     CreatedByUser = qt.CreatedByUser,
                     Description = qt.Description,
                     GroupId = qt.GroupId,
+                    CreatedAt = qt.CreatedAt,
                     GroupTaskQuizzes = qt.GroupTaskQuizzes.Select(qtq => new GroupTaskQuizzesDto
                     {
                         Id = qtq.Id,

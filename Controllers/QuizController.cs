@@ -40,6 +40,23 @@ namespace IquraStudyBE.Controllers
                 .Where(q => q.CreatedByUserId == userId).Include(q => q.CreatedByUser)
                 .ToListAsync();
         }
+        
+        // GET: api/Quiz/select/5
+        [HttpGet("select/{id}")]
+        public async Task<ActionResult<IEnumerable<Quiz>>> GetQuizzesSelect(int id)
+        {
+            if (_context.Quizzes == null)
+            {
+                return NotFound();
+            }
+
+            var array = _context.GroupTaskQuizzes.Where(tq => tq.GroupTaskId == id).Select(s => s.QuizId);
+            var userId = _tokenService.GetUserIdFromToken();
+            return await _context.Quizzes
+                .Where(q => q.CreatedByUserId == userId && !array.Contains(q.Id))
+                .Include(q => q.CreatedByUser)
+                .ToListAsync();
+        }
 
         // GET: api/Quiz/5
         [HttpGet("{id}")]
@@ -62,6 +79,7 @@ namespace IquraStudyBE.Controllers
 
             return quiz;
         }
+      
 
         // GET: api/Quiz/WithoutAnswers/5
         [HttpGet("WithoutAnswers/{id}")]

@@ -11,7 +11,7 @@ public partial class QuizSubmittion
     public int QuizId { get; set; }
     public int GroupTaskId { get; set; }
     public double Score { get; set; } = 0;
-    public DateTime? CreatedAt { get; set; } = DateTime.Now;
+    public DateTime? CreatedAt { get; set; } = DateTime.UtcNow;
     public virtual User User { get; set; }
     public virtual Quiz Quiz { get; set; }
     public virtual GroupTask GroupTask { get; set; }
