@@ -10,6 +10,8 @@ public partial class GroupTaskProblem
     public int? GroupTaskId { get; set; }
 
     public int? ProblemId { get; set; }
+    
+    public DateTime? CreatedAt { get; set; } = DateTime.Now;
 
     public virtual GroupTask? GroupTask { get; set; }
 

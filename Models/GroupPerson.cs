@@ -24,4 +24,6 @@ public partial class GroupPerson
     public virtual Group? Group { get; set; }
 
     public virtual User? User { get; set; }
+    
+    public DateTime? CreatedAt { get; set; } = DateTime.Now;
 }

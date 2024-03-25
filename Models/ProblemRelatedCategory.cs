@@ -14,4 +14,6 @@ public partial class ProblemRelatedCategory
     public virtual Category? Category { get; set; }
 
     public virtual Problem? Problem { get; set; }
+    
+    public DateTime? CreatedAt { get; set; } = DateTime.Now;
 }

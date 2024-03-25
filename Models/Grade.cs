@@ -13,7 +13,7 @@ public partial class Grade
 
     public int? GradeScore { get; set; }
 
-    public DateTime? CreatedAt { get; set; }
+    public DateTime? CreatedAt { get; set; } = DateTime.Now;
 
     public virtual Problem? Problem { get; set; }
 

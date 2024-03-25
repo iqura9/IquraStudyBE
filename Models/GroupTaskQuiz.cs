@@ -14,4 +14,6 @@ public partial class GroupTaskQuiz
     public virtual GroupTask? GroupTask { get; set; }
 
     public virtual Quiz? Quiz { get; set; }
+    
+    public DateTime? CreatedAt { get; set; } = DateTime.Now;
 }

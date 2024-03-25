@@ -12,6 +12,9 @@ public partial class GroupTask
     public int? GroupId { get; set; }
     [ForeignKey("CreatedByUser")]
     public string? CreateByUserId { get; set; }
+    
+    public DateTime? CreatedAt { get; set; } = DateTime.Now;
+    
     public virtual Group? Group { get; set; }
     public virtual User? CreatedByUser { get; set; }
     public virtual ICollection<GroupTaskProblem> GroupTaskProblems { get; } = new List<GroupTaskProblem>();

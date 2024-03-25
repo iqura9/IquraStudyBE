@@ -11,7 +11,8 @@ public partial class Group
     public string? Name { get; set; }
     [ForeignKey("CreatedByUser")]
     public string CreatedByUserId { get; set; }
-    public DateTime? CreatedAt { get; set; }
+
+    public DateTime? CreatedAt { get; set; } = DateTime.Now;
 
     public bool? IsArchived { get; set; } = false;
     public virtual User? CreatedByUser { get; set; }

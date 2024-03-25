@@ -56,6 +56,57 @@ namespace IquraStudyBE.Controllers
             return groupTask;
         }
         
+        // GET: api/Task/view-grade/5
+        [HttpGet("view-grade/{id}")]
+        public async Task<ActionResult<List<object>>> GetTaskGrade(int id)
+        {
+            if (_context.QuizSubmittions == null)
+            {
+                return NotFound();
+            }
+
+            List<QuizSubmittion> quizSubmittions = await _context.QuizSubmittions
+                .Where(gt => gt.GroupTaskId == id)
+                .Include(t => t.Quiz)
+                .Include(t => t.User)
+                .ToListAsync();
+    
+            if (quizSubmittions == null)
+            {
+                return NotFound();
+            }
+
+            var groupedByUser = quizSubmittions.GroupBy(qs => qs.User.Id);
+
+            var result = new List<object>();
+
+            foreach (var group in groupedByUser)
+            {
+                var user = group.First().User;
+                var scores = group.Select(qs => new
+                {
+                    createdDate = qs.CreatedAt,
+                    taskTitle = qs.Quiz.Title,
+                    maxScore = 100,
+                    received = qs.Score
+                }).ToList();
+
+                var userResult = new
+                {
+                    key = user.Id,
+                    name = user.UserName,
+                    overall_score = scores.Average(s => s.received),
+                    scores = scores
+                };
+
+                result.Add(userResult);
+            }
+
+            return result;
+        }
+
+
+        
         // GET: api/Task/Quiz?taskId=5
         [HttpGet("Quiz")]
         [Authorize]

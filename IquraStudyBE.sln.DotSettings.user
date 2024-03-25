@@ -1,10 +1,11 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=37ccc6c7_002Da885_002D4514_002D9330_002D041791d373a7/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="GetEmailFromToken_WithValidToken_ReturnsEmail" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+	<s:String x:Key="/Default/Environment/Highlighting/HighlightingSourceSnapshotLocation/@EntryValue">/Users/iqura/Library/Caches/JetBrains/Rider2022.2/resharper-host/temp/Rider/vAny/CoverageData/_IquraStudyBE.4606469/Snapshot/snapshot.utdcvr</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=37ccc6c7_002Da885_002D4514_002D9330_002D041791d373a7/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="GetEmailFromToken_WithValidToken_ReturnsEmail" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;TestAncestor&gt;
     &lt;TestId&gt;NUnit3x::10AEE340-43C5-45DD-8E15-2B495CDB986D::net7.0::NUnitTests.Tests.GetEmailFromToken_WithValidToken_ReturnsEmail&lt;/TestId&gt;
   &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=6dd16e42_002D04b8_002D45b8_002Db6d7_002Df83bf49e0ad4/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="GetPrincipalFromExpiredToken_ReturnsValidClaimsPrincipal" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=6dd16e42_002D04b8_002D45b8_002Db6d7_002Df83bf49e0ad4/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="GetPrincipalFromExpiredToken_ReturnsValidClaimsPrincipal" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;TestAncestor&gt;
     &lt;TestId&gt;NUnit3x::10AEE340-43C5-45DD-8E15-2B495CDB986D::net7.0::NUnitTests.Tests&lt;/TestId&gt;
     &lt;TestId&gt;NUnit3x::10AEE340-43C5-45DD-8E15-2B495CDB986D::net7.0::NUnitTests.TokenControllerTests&lt;/TestId&gt;
