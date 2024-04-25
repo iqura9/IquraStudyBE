@@ -237,5 +237,39 @@ namespace IquraStudyBE.Controllers
         {
             return (_context.GroupTasks?.Any(e => e.Id == id)).GetValueOrDefault();
         }
+        
+        // DELETE: api/Task/Quiz
+        [HttpDelete("Quiz")]
+        public async Task<IActionResult> DeleteGroupTaskQuizzes([FromBody] int[] ids)
+        {
+            if (ids == null || ids.Length == 0)
+            {
+                return BadRequest("No IDs provided for deletion.");
+            }
+
+            foreach (var id in ids)
+            {
+                var groupTaskQuiz = await _context.GroupTaskQuizzes.FindAsync(id);
+
+                if (groupTaskQuiz != null)
+                {
+                    var quizSubmittions = await _context.QuizSubmittions
+                        .Where(q => q.GroupTaskId == groupTaskQuiz.GroupTaskId && q.QuizId == groupTaskQuiz.QuizId)
+                        .ToListAsync(); // Execute the query
+
+                    _context.GroupTaskQuizzes.Remove(groupTaskQuiz);
+
+                    if (quizSubmittions.Any()) // Check if any QuizSubmittions exist
+                    {
+                        _context.QuizSubmittions.RemoveRange(quizSubmittions); // Remove all found QuizSubmittions
+                    }
+                }
+            }
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
     }
 }
