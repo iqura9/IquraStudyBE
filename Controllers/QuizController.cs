@@ -36,9 +36,10 @@ namespace IquraStudyBE.Controllers
           }
 
           var userId = _tokenService.GetUserIdFromToken();
-          return await _context.Quizzes
+          var quizzes = await _context.Quizzes
                 .Where(q => q.CreatedByUserId == userId).Include(q => q.CreatedByUser)
                 .ToListAsync();
+          return Ok(quizzes);
         }
         
         // GET: api/Quiz/select/5
