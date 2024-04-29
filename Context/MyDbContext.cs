@@ -48,8 +48,12 @@ public partial class MyDbContext : IdentityDbContext<User>
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseNpgsql("Server=localhost;Port=5433;Database=IquraStudyDB;Username= postgres;Password=root;Pooling=true;");
-        base.OnConfiguring(optionsBuilder);
+        if (!optionsBuilder.IsConfigured)
+        {
+            optionsBuilder.UseNpgsql("Server=localhost;Port=5433;Database=IquraStudyDB;Username= postgres;Password=root;Pooling=true;");
+            base.OnConfiguring(optionsBuilder);  
+        }
+       
     }
 
    

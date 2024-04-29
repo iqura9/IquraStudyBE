@@ -98,6 +98,18 @@ namespace IquraStudyBE.Controllers
                     return NotFound("Question not found");
                 }
 
+                // Check if answers are empty or null
+                if (answers == null || !answers.Any())
+                {
+                    return BadRequest("Answers cannot be empty");
+                }
+
+                // Check if any answer has a null or empty title
+                if (answers.Any(a => string.IsNullOrWhiteSpace(a.Title)))
+                {
+                    return BadRequest("Answer title cannot be empty");
+                }
+
                 // Map DTOs to Answer entities
                 var answerEntities = answers.Select(dto => new Answer
                 {
@@ -120,6 +132,7 @@ namespace IquraStudyBE.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
 
 
         // DELETE: api/Answer/5
