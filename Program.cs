@@ -98,4 +98,6 @@ app.MapFallback(async context =>
     await context.Response.WriteAsync("Oops! The page you are looking for cannot be found.");
 });
 
+app.UseExceptionHandler("/Error");
+
 app.Run();

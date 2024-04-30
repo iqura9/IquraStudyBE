@@ -195,23 +195,33 @@ namespace IquraStudyBE.Controllers
         [Authorize(Roles = "Teacher")]
         public async Task<ActionResult<GroupTask>> PostGroupTask(CreateGroupTaskDTO data)
         {
-          if (_context.GroupTasks == null)
-          {
-              return Problem("Entity set 'MyDbContext.GroupTasks'  is null.");
-          }
-            
-          var groupTask = new GroupTask
-          {
-              Title = data.Title,
-              Description = data.Description,
-              GroupId  = data.GroupId,
-              CreateByUserId = _tokenService.GetUserIdFromToken(),
-          };
-            _context.GroupTasks.Add(groupTask);
-            await _context.SaveChangesAsync();
+            try
+            {
+                if (_context.GroupTasks == null)
+                {
+                    return Problem("Entity set 'MyDbContext.GroupTasks' is null.");
+                }
 
-            return CreatedAtAction("GetGroupTask", new { id = groupTask.Id }, groupTask);
+                var groupTask = new GroupTask
+                {
+                    Title = data.Title,
+                    Description = data.Description,
+                    GroupId = data.GroupId,
+                    CreateByUserId = _tokenService.GetUserIdFromToken(),
+                };
+
+                _context.GroupTasks.Add(groupTask);
+                await _context.SaveChangesAsync();
+
+                return CreatedAtAction("GetGroupTask", new { id = groupTask.Id }, groupTask);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception here
+                return Problem("An error occurred while processing your request.", statusCode: 500);
+            }
         }
+
 
         // DELETE: api/Task/5
         [HttpDelete("{id}")]
