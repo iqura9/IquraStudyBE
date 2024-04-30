@@ -91,7 +91,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
 app.MapFallback(async context =>
 {
     context.Response.StatusCode = 404;
