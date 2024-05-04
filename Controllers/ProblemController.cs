@@ -109,9 +109,26 @@ namespace IquraStudyBE.Controllers
               Title = problem.Title,
               Description = problem.Description,
               CreatedAt = DateTime.UtcNow,
+              UpdatedAt = DateTime.UtcNow,
               UserId = userId,
           };
           _context.Problems.Add(newProblem);
+          
+          await _context.SaveChangesAsync();
+          
+          foreach (var testCase in problem.TestCases)
+          {
+              var testCaseEntity = new TestCase
+              {
+                  ExpectedResult = testCase.ExpectedResult,
+                  Input = testCase.Input,
+                  Problem = newProblem,
+                  ProblemId = newProblem.Id,
+                  
+              };
+
+              _context.TestCases.Add(testCaseEntity);
+          }
           
           await _context.SaveChangesAsync();
         

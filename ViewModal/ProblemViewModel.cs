@@ -1,3 +1,5 @@
+using IquraStudyBE.Models;
+
 namespace IquraStudyBE.ViewModal;
 
 public class ProblemViewModel
@@ -9,4 +11,7 @@ public class ProblemViewModel
     public DateTime? CreatedAt { get; set; }
 
     public DateTime? UpdatedAt { get; set; }
+    
+    public List<TestCase> TestCases { get; set; } = new List<TestCase>();
 }
+
