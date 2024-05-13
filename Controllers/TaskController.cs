@@ -148,7 +148,8 @@ namespace IquraStudyBE.Controllers
                         Id = qtp.Id,
                         GroupTaskId = qtp.GroupTaskId ?? 0,
                         ProblemId = qtp.ProblemId,
-                        Problem = qtp.Problem
+                        Problem = qtp.Problem,
+                        Score = qt.ProblemSubmittions.Where(qs => qs.UserId == myUserId && qs.ProblemId == qtp.ProblemId && qs.GroupTaskId == qt.Id).FirstOrDefault().Score
                     }).ToList(),
                     AverageScore = qt.QuizSubmittions
                         .Where(qs => qs.UserId == myUserId && qs.GroupTaskId == qt.Id)
@@ -289,17 +290,16 @@ namespace IquraStudyBE.Controllers
 
                         if (groupTaskProblem != null)
                         {
-                            // #TODO: Implement when submittion fixed
-                            // var problemSubmittions = await _context.QuizSubmittions
-                            //     .Where(q => q.GroupTaskId == groupTaskProblem.GroupTaskId && q.ProblemId == groupTaskProblem.ProblemId)
-                            //     .ToListAsync(); // Execute the query
+                            var problemSubmittions = await _context.ProblemSubmittions
+                                .Where(p => p.GroupTaskId == groupTaskProblem.GroupTaskId && p.ProblemId == groupTaskProblem.ProblemId)
+                                .ToListAsync(); // Execute the query
 
                             _context.GroupTaskProblems.Remove(groupTaskProblem);
 
-                            // if (problemSubmittions.Any()) // Check if any QuizSubmittions exist
-                            // {
-                            //     _context.QuizSubmittions.RemoveRange(problemSubmittions); // Remove all found QuizSubmittions
-                            // }
+                            if (problemSubmittions.Any()) // Check if any ProblemSubmittions exist
+                            {
+                                _context.ProblemSubmittions.RemoveRange(problemSubmittions); // Remove all found ProblemSubmittions
+                            }
                         } 
                 }
                 

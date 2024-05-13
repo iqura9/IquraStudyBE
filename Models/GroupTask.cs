@@ -20,6 +20,6 @@ public partial class GroupTask
     public virtual ICollection<GroupTaskProblem> GroupTaskProblems { get; } = new List<GroupTaskProblem>();
     public virtual ICollection<GroupTaskQuiz> GroupTaskQuizzes { get; } = new List<GroupTaskQuiz>();
     public virtual ICollection<QuizSubmittion> QuizSubmittions { get; } = new List<QuizSubmittion>();
-
+    public virtual ICollection<ProblemSubmittion> ProblemSubmittions { get; } = new List<ProblemSubmittion>();
 
 }

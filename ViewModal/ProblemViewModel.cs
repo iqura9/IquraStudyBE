@@ -16,3 +16,12 @@ public class ProblemViewModel
     public List<TestCase> TestCases { get; set; } = new List<TestCase>();
 }
 
+
+public class PostProblemSubmittionDTO
+{
+    public string SourceCode { get; set; }
+    public double Score { get; set; }
+    public int GroupTaskId { get; set; }
+    public int ProblemId { get; set; }
+    
+}

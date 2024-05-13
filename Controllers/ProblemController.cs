@@ -136,6 +136,69 @@ namespace IquraStudyBE.Controllers
         
           return CreatedAtAction("GetProblem", new { id = newProblem.Id }, problem);
         }
+        
+        
+        // POST: api/Problem/Submittion
+// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost("/api/Problems/Submittion")]
+        public async Task<ActionResult<ProblemSubmittion>> PostProblemSubmittion([FromBody] PostProblemSubmittionDTO problem)
+        {
+            if (_context.ProblemSubmittions == null)
+            {
+                return Problem("Entity set 'MyDbContext.Problems' is null.");
+            }
+
+            var userId = _tokenService.GetUserIdFromToken();
+
+            // Check if a problem submission with the same problem ID and user ID already exists
+            var existingSubmission = await _context.ProblemSubmittions.FirstOrDefaultAsync(ps =>
+                ps.UserId == userId && ps.ProblemId == problem.ProblemId && ps.GroupTaskId == problem.GroupTaskId);
+
+            if (existingSubmission != null)
+            {
+                // Update the existing problem submission
+                existingSubmission.SourceCode = problem.SourceCode;
+                existingSubmission.Score = problem.Score;
+                existingSubmission.CreatedAt = DateTime.UtcNow;
+
+                await _context.SaveChangesAsync();
+
+                return Ok(existingSubmission);
+            }
+                // Create a new problem submission
+                var newProblem = new ProblemSubmittion()
+                {
+                    CreatedAt = DateTime.UtcNow,
+                    UserId = userId,
+                    SourceCode = problem.SourceCode,
+                    Score = problem.Score,
+                    ProblemId = problem.ProblemId,
+                    GroupTaskId = problem.GroupTaskId
+                };
+                _context.ProblemSubmittions.Add(newProblem);
+
+                await _context.SaveChangesAsync();
+
+                return Ok(newProblem);
+            
+        }
+
+        
+        // GET: api/Problem/Submittion
+        [HttpGet("Submittion")]
+        public async Task<ActionResult<IEnumerable<ProblemSubmittion>>> GetProblemSubmittions(int groupTaskId, int problemId)
+        {
+            var userId = _tokenService.GetUserIdFromToken();
+    
+            // Retrieve problem submissions for the current user matching groupTaskId and problemId
+            var problemSubmittions = await _context.ProblemSubmittions
+                .Where(ps => ps.UserId == userId && ps.GroupTaskId == groupTaskId && ps.ProblemId == problemId)
+                .ToListAsync();
+
+            return Ok(problemSubmittions);
+        }
+
+
 
         // DELETE: api/Problem/5
         [HttpDelete("{id}")]
