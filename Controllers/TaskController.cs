@@ -13,6 +13,8 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace IquraStudyBE.Controllers
 {
+    
+
     [Route("api/[controller]")]
     [ApiController]
     public class TaskController : ControllerBase
@@ -141,6 +143,13 @@ namespace IquraStudyBE.Controllers
                         Quiz = qtq.Quiz,
                         Score = qt.QuizSubmittions.Where(qs => qs.UserId == myUserId && qs.QuizId == qtq.QuizId && qs.GroupTaskId == qt.Id).FirstOrDefault().Score
                     }).ToList(),
+                    GroupTaskProblems = qt.GroupTaskProblems.Select(qtp => new GroupTaskProblemsDTO
+                    {
+                        Id = qtp.Id,
+                        GroupTaskId = qtp.GroupTaskId ?? 0,
+                        ProblemId = qtp.ProblemId,
+                        Problem = qtp.Problem
+                    }).ToList(),
                     AverageScore = qt.QuizSubmittions
                         .Where(qs => qs.UserId == myUserId && qs.GroupTaskId == qt.Id)
                         .Select(qs => (double?)qs.Score)
@@ -250,30 +259,50 @@ namespace IquraStudyBE.Controllers
         
         // DELETE: api/Task/Quiz
         [HttpDelete("Quiz")]
-        public async Task<IActionResult> DeleteGroupTaskQuizzes([FromBody] int[] ids)
+        public async Task<IActionResult> DeleteGroupTaskQuizzes([FromBody] DeleteGroupTaskDTO[] deleteGroupTaskDto)
         {
-            if (ids == null || ids.Length == 0)
+            
+            foreach (var data in deleteGroupTaskDto)
             {
-                return BadRequest("No IDs provided for deletion.");
-            }
-
-            foreach (var id in ids)
-            {
-                var groupTaskQuiz = await _context.GroupTaskQuizzes.FindAsync(id);
-
-                if (groupTaskQuiz != null)
+                if (data.type == "Test")
                 {
-                    var quizSubmittions = await _context.QuizSubmittions
-                        .Where(q => q.GroupTaskId == groupTaskQuiz.GroupTaskId && q.QuizId == groupTaskQuiz.QuizId)
-                        .ToListAsync(); // Execute the query
+                        var groupTaskQuiz = await _context.GroupTaskQuizzes.FindAsync(data.id);
 
-                    _context.GroupTaskQuizzes.Remove(groupTaskQuiz);
+                        if (groupTaskQuiz != null)
+                        {
+                            var quizSubmittions = await _context.QuizSubmittions
+                                .Where(q => q.GroupTaskId == groupTaskQuiz.GroupTaskId && q.QuizId == groupTaskQuiz.QuizId)
+                                .ToListAsync(); // Execute the query
 
-                    if (quizSubmittions.Any()) // Check if any QuizSubmittions exist
-                    {
-                        _context.QuizSubmittions.RemoveRange(quizSubmittions); // Remove all found QuizSubmittions
-                    }
+                            _context.GroupTaskQuizzes.Remove(groupTaskQuiz);
+
+                            if (quizSubmittions.Any()) // Check if any QuizSubmittions exist
+                            {
+                                _context.QuizSubmittions.RemoveRange(quizSubmittions); // Remove all found QuizSubmittions
+                            }
+                        } 
                 }
+
+                if (data.type == "Problem")
+                {
+                        var groupTaskProblem = await _context.GroupTaskProblems.FindAsync(data.id);
+
+                        if (groupTaskProblem != null)
+                        {
+                            // #TODO: Implement when submittion fixed
+                            // var problemSubmittions = await _context.QuizSubmittions
+                            //     .Where(q => q.GroupTaskId == groupTaskProblem.GroupTaskId && q.ProblemId == groupTaskProblem.ProblemId)
+                            //     .ToListAsync(); // Execute the query
+
+                            _context.GroupTaskProblems.Remove(groupTaskProblem);
+
+                            // if (problemSubmittions.Any()) // Check if any QuizSubmittions exist
+                            // {
+                            //     _context.QuizSubmittions.RemoveRange(problemSubmittions); // Remove all found QuizSubmittions
+                            // }
+                        } 
+                }
+                
             }
 
             await _context.SaveChangesAsync();

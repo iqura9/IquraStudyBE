@@ -10,7 +10,7 @@ public partial class Problem
     public string? Title { get; set; }
 
     public string? Description { get; set; }
-
+    public string? InitFunc { get; set; }
     public string UserId { get; set; }
     public virtual User User { get; set; } = null!;
 

@@ -49,7 +49,8 @@ namespace IquraStudyBE.Controllers
           {
               return NotFound();
           }
-            var problem = await _context.Problems.FindAsync(id);
+
+          var problem = await _context.Problems.Include(p => p.TestCases).FirstOrDefaultAsync(p => p.Id == id);
             
             if (problem == null)
             {
@@ -111,6 +112,7 @@ namespace IquraStudyBE.Controllers
               CreatedAt = DateTime.UtcNow,
               UpdatedAt = DateTime.UtcNow,
               UserId = userId,
+              InitFunc = problem.InitFunc, 
           };
           _context.Problems.Add(newProblem);
           

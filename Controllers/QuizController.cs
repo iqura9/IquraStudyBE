@@ -289,35 +289,67 @@ namespace IquraStudyBE.Controllers
         [Authorize(Roles = "Teacher")]
         public async Task<ActionResult> PostQuizTasks([FromBody] CreateQuizTaskDto data)
         {
+            
             if (_context.Quizzes == null)
             {
                 return Problem("Entity set 'MyDbContext.Quizzes' is null.");
             }
 
-            if (data.QuizIds == null || data.QuizIds.Length == 0)
+            // Check if both QuizIds and ProblemIds are null or empty
+            if ((data.QuizIds == null || data.QuizIds.Length == 0) && (data.ProblemIds == null || data.ProblemIds.Length == 0))
             {
-                return BadRequest("QuizIds array is null or empty.");
+                return BadRequest("QuizIds and ProblemIds array is null or empty.");
             }
 
-            foreach (var quizId in data.QuizIds)
-            {
-                // Check if a GroupTaskQuiz with the same QuizId and GroupTaskId already exists
-                if (!_context.GroupTaskQuizzes.Any(gtq => gtq.QuizId == quizId && gtq.GroupTaskId == data.GroupTasksId))
-                {
-                    var quiz = new GroupTaskQuiz()
-                    {
-                        GroupTaskId = data.GroupTasksId,
-                        QuizId = quizId,
-                    };
+            bool changesMade = false; // Track if any changes are made to the context
 
-                    _context.GroupTaskQuizzes.Add(quiz);
+            if (data.QuizIds != null && data.QuizIds.Length > 0)
+            {
+                foreach (int quizId in data.QuizIds)
+                {
+                    // Check if a GroupTaskQuiz with the same QuizId and GroupTaskId already exists
+                    if (!_context.GroupTaskQuizzes.Any(gtq => gtq.QuizId == quizId && gtq.GroupTaskId == data.GroupTasksId))
+                    {
+                        var quiz = new GroupTaskQuiz()
+                        {
+                            GroupTaskId = data.GroupTasksId,
+                            QuizId = quizId,
+                        };
+
+                        _context.GroupTaskQuizzes.Add(quiz);
+                        changesMade = true; // Entity added, so changes are made
+                    }
                 }
             }
 
-            await _context.SaveChangesAsync();
+            if (data.ProblemIds != null && data.ProblemIds.Length > 0)
+            {
+                foreach (var problemId in data.ProblemIds)
+                {
+                    // Check if a GroupTaskProblem with the same ProblemId and GroupTaskId already exists
+                    if (!_context.GroupTaskProblems.Any(gtp => gtp.ProblemId == problemId && gtp.GroupTaskId == data.GroupTasksId))
+                    {
+                        var problem = new GroupTaskProblem()
+                        {
+                            GroupTaskId = data.GroupTasksId,
+                            ProblemId = problemId
+                        };
 
-            return Ok("Successfully added quizzes to task");
+                        _context.GroupTaskProblems.Add(problem);
+                        changesMade = true; // Entity added, so changes are made
+                    }
+                }
+            }
+
+            if (changesMade)
+            {
+                await _context.SaveChangesAsync(); // Save changes only if any entity is added
+                return Ok("Successfully added quizzes to task");
+            }
+
+            return Ok("No changes made."); // No entities added, return OK with a message
         }
+
 
 
         // DELETE: api/Quiz/5

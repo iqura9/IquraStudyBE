@@ -9,7 +9,9 @@ public class CreateQuizTaskDto
 {
     
     public int GroupTasksId { get; set; }
-    public int[] QuizIds { get; set; }
+    public int[]? QuizIds { get; set; }
+    public int[]? ProblemIds { get; set; }
+
 }
 
 public class CreateQuestionDto

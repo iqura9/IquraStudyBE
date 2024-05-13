@@ -14,6 +14,11 @@ public class CreateGroupTaskDTO
     public int GroupId { get; set; }
 }
 
+public class DeleteGroupTaskDTO
+{
+    public string type;
+    public int id;
+}
 
 public class GroupTaskQuizzesDto
 {
@@ -24,6 +29,17 @@ public class GroupTaskQuizzesDto
     public Quiz Quiz { get; set; }
     public double? Score { get; set; }
 }
+
+public class GroupTaskProblemsDTO
+{
+
+    public int GroupTaskId { get; set; }
+    public int Id { get; set; }
+    public int? ProblemId { get; set; }
+    public Problem? Problem { get; set; }
+    public double? Score { get; set; }
+}
+
 public class GetGroupTaskQuiz
 {
     public int Id { get; set; }
@@ -32,6 +48,8 @@ public class GetGroupTaskQuiz
     public string? Description { get; set; }
     public int? GroupId { get; set; }
     public List<GroupTaskQuizzesDto> GroupTaskQuizzes { get; set; }
+    public List<GroupTaskProblemsDTO> GroupTaskProblems { get; set; } 
+
     public string Title { get; set; }
     public double? AverageScore { get; set; }
     public DateTime? CreatedAt { get; set; }
