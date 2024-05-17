@@ -62,43 +62,59 @@ namespace IquraStudyBE.Controllers
         [HttpGet("view-grade/{id}")]
         public async Task<ActionResult<List<object>>> GetTaskGrade(int id)
         {
-            if (_context.QuizSubmittions == null)
-            {
-                return NotFound();
-            }
-
             List<QuizSubmittion> quizSubmittions = await _context.QuizSubmittions
                 .Where(gt => gt.GroupTaskId == id)
                 .Include(t => t.Quiz)
                 .Include(t => t.User)
                 .ToListAsync();
-    
-            if (quizSubmittions == null)
+            
+            List<ProblemSubmittion> problemSubmittions = await _context.ProblemSubmittions
+                .Where(gt => gt.GroupTaskId == id)
+                .Include(t => t.Problem)
+                .Include(t => t.User)
+                .ToListAsync();
+            
+            if (quizSubmittions == null && problemSubmittions == null)
             {
                 return NotFound();
             }
-
-            var groupedByUser = quizSubmittions.GroupBy(qs => qs.User.Id);
+            
+            var groupedQuizByUser = quizSubmittions.GroupBy(qs => qs.User.Id);
+            
+            var groupedProblemByUser = problemSubmittions.GroupBy(ps => ps.User.Id);
 
             var result = new List<object>();
-
-            foreach (var group in groupedByUser)
+            
+            foreach (var group in groupedQuizByUser)
             {
                 var user = group.First().User;
-                var scores = group.Select(qs => new
+                
+                var quizScores = group.Select(qs => new
                 {
                     createdDate = qs.CreatedAt,
                     taskTitle = qs.Quiz.Title,
                     maxScore = 100,
                     received = qs.Score
                 }).ToList();
+                
+                var problemScores = groupedProblemByUser
+                    .Where(pb => pb.Key == user.Id)
+                    .SelectMany(pb => pb.Select(ps => new
+                    {
+                        createdDate = ps.CreatedAt,
+                        taskTitle = ps.Problem.Title,
+                        maxScore = 100, 
+                        received = ps.Score
+                    })).ToList();
+                
+                var allScores = quizScores.Concat(problemScores).ToList();
 
                 var userResult = new
                 {
                     key = user.Id,
                     name = user.UserName,
-                    overall_score = scores.Average(s => s.received),
-                    scores = scores
+                    overall_score = allScores.Average(s => s.received),
+                    scores = allScores
                 };
 
                 result.Add(userResult);
@@ -106,6 +122,7 @@ namespace IquraStudyBE.Controllers
 
             return result;
         }
+
 
 
         
