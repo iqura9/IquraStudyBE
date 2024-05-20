@@ -36,8 +36,6 @@ public partial class MyDbContext : IdentityDbContext<User>
 
     public virtual DbSet<ProblemRelatedCategory> ProblemRelatedCategories { get; set; }
 
-    public virtual DbSet<Submittion> Submittions { get; set; }
-
     public virtual DbSet<TestCase> TestCases { get; set; }
     
     public virtual DbSet<Quiz> Quizzes { get; set; }

@@ -24,8 +24,6 @@ public partial class Problem
 
     public virtual ICollection<ProblemRelatedCategory> ProblemRelatedCategories { get; } = new List<ProblemRelatedCategory>();
 
-    public virtual ICollection<Submittion> Submittions { get; } = new List<Submittion>();
-
     public virtual ICollection<TestCase> TestCases { get; } = new List<TestCase>();
     
     

@@ -168,10 +168,19 @@ namespace IquraStudyBE.Controllers
                         Problem = qtp.Problem,
                         Score = qt.ProblemSubmittions.Where(qs => qs.UserId == myUserId && qs.ProblemId == qtp.ProblemId && qs.GroupTaskId == qt.Id).FirstOrDefault().Score
                     }).ToList(),
-                    AverageScore = qt.QuizSubmittions
-                        .Where(qs => qs.UserId == myUserId && qs.GroupTaskId == qt.Id)
-                        .Select(qs => (double?)qs.Score)
-                        .Average() ?? 0.0,
+                    AverageScore = qt.GroupTaskQuizzes
+                        .Select(qtq => qt.QuizSubmittions
+                            .Where(qs => qs.UserId == myUserId && qs.QuizId == qtq.QuizId && qs.GroupTaskId == qt.Id)
+                            .Select(qs => (double?)qs.Score)
+                            .FirstOrDefault() ?? 0.0)
+                        .Concat(
+                            qt.GroupTaskProblems
+                                .Select(qtp => qt.ProblemSubmittions
+                                    .Where(ps => ps.UserId == myUserId && ps.ProblemId == qtp.ProblemId && ps.GroupTaskId == qt.Id)
+                                    .Select(ps => (double?)ps.Score)
+                                    .FirstOrDefault() ?? 0.0)
+                        )
+                        .Average(),
                     Title = qt.Title,
                 })
                 .FirstOrDefaultAsync();
