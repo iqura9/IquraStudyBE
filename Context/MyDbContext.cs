@@ -16,8 +16,8 @@ public partial class MyDbContext : IdentityDbContext<User>
     public MyDbContext(DbContextOptions<MyDbContext> options)
         : base(options)
     {
-         // Database.EnsureDeleted();
-         // Database.EnsureCreated();
+          //Database.EnsureDeleted();
+         //Database.EnsureCreated();
     }
 
     public virtual DbSet<Category> Categories { get; set; }
@@ -44,20 +44,7 @@ public partial class MyDbContext : IdentityDbContext<User>
     public virtual DbSet<ProblemSubmittion> ProblemSubmittions { get; set; }
     public virtual DbSet<Question> Questions { get; set; }
     public virtual DbSet<Answer> Answers { get; set; }
-
     
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        if (!optionsBuilder.IsConfigured)
-        {
-            optionsBuilder.UseNpgsql("Server=localhost;Port=5433;Database=IquraStudyDB;Username= postgres;Password=root;Pooling=true;");
-            base.OnConfiguring(optionsBuilder);  
-        }
-       
-    }
-
-   
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Quiz>()

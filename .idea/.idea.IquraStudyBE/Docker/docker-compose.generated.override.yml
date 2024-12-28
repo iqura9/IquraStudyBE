@@ -1,0 +1,20 @@
+# This is a generated file. Not intended for manual editing.
+version: "3.8"
+services:
+  server_api:
+    build:
+      context: "/Users/iqura/Desktop/DiplomWork/IquraStudyBE"
+      dockerfile: "Dockerfile"
+      target: "build"
+    command: []
+    entrypoint:
+    - "dotnet"
+    - "/app/bin/Debug/net7.0/IquraStudyBE.dll"
+    environment: {}
+    image: "iqura_study/server_api:dev"
+    ports: []
+    volumes:
+    - "/Users/iqura/Desktop/DiplomWork/IquraStudyBE:/app:rw"
+    - "/Users/iqura/Desktop/DiplomWork/IquraStudyBE:/src:rw"
+    - "/Users/iqura/.nuget/packages:/root/.nuget/packages"
+    working_dir: "/app"
