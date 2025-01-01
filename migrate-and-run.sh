@@ -2,8 +2,17 @@
 
 # Run database migrations
 echo "Running migrations..."
-/root/.dotnet/tools/dotnet-ef database update --project /app/IquraStudyBE.csproj || { echo "Migration failed"; exit 1; }
+if ! /root/.dotnet/tools/dotnet-ef database update --project /app/IquraStudyBE.csproj; then
+  echo "Migration failed"
+  exit 1
+fi
 
 # Start the application
 echo "Starting the application..."
-exec dotnet IquraStudyBE.dll
+if [ "$ENVIRONMENT" = "PRODUCTION" ]; then
+  echo "Running in PRODUCTION mode..."
+  exec dotnet /app/IquraStudyBE.dll
+else
+  echo "Running in DEVELOPMENT mode..."
+  exec dotnet watch run --project /app/IquraStudyBE.csproj --urls "http://0.0.0.0:8080"
+fi

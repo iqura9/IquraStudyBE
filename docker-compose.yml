@@ -11,7 +11,8 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__LocalConnection=Host=database;Database=IquraStudyDB;Username=postgres;Password=postgres
-      - ASPNETCORE_URLS=http://*:8080
+    volumes:
+      - .:/app
     depends_on:
       - database
     restart: always
