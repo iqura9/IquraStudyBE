@@ -40,16 +40,14 @@
     },
     "Watch_App": {
       "commandName": "Executable",
-      "executablePath": "dotnet",
-      "commandLineArgs": "watch run --project IquraStudyBE.csproj --port 5000",
+      "executablePath": "/usr/local/share/dotnet/dotnet",
+      "commandLineArgs": "watch run --urls=http://localhost:5000",
       "workingDirectory": "$(ProjectDir)",
-      "useSSL": false,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "dotnetRunMessages": true,
-      "applicationUrl": "http://::5000"
-    },  
+      "dotnetRunMessages": true
+    },
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
