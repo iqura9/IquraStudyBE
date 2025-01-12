@@ -13,5 +13,6 @@ public class Competition
     public string Difficulty { get; set; } = string.Empty; // Easy, Medium, Hard
     
     public virtual ICollection<CompetitionProblem> CompetitionProblems { get; } = new List<CompetitionProblem>();
+    public virtual ICollection<CompetitionQuiz> CompetitionQuizzes { get; } = new List<CompetitionQuiz>();
 
 }

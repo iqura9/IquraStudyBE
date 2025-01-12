@@ -38,17 +38,16 @@ public class TaskService
             {
                 if (isCompetition)
                 {
-                    // For competitions
-                    // if (!_context.CompetitionQuizzes.Any(cq => cq.QuizId == quizId && cq.CompetitionId == taskId))
-                    // {
-                    //     var competitionQuiz = new CompetitionQuiz
-                    //     {
-                    //         CompetitionId = taskId,
-                    //         QuizId = quizId,
-                    //     };
-                    //     _context.CompetitionQuizzes.Add(competitionQuiz);
-                    //     changesMade = true;
-                    // }
+                    if (!_context.CompetitionQuizzes.Any(cq => cq.QuizId == quizId && cq.CompetitionId == taskId))
+                    {
+                        var competitionQuiz = new CompetitionQuiz
+                        {
+                            CompetitionId = taskId,
+                            QuizId = quizId,
+                        };
+                        _context.CompetitionQuizzes.Add(competitionQuiz);
+                        changesMade = true;
+                    }
                 }
                 else
                 {

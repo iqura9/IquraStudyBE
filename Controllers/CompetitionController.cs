@@ -23,6 +23,9 @@ public class CompetitionDto
     public int? Duration { get; set; }
     public string Difficulty { get; set; }
     public List<ProblemDto> Problems { get; set; }
+    public int ProblemsCount  { get; set; }
+    public List<Quiz> Quizzes { get; set; }
+    public int QuizzesCount { get; set; }
 }
 
 // DTO for Problem
@@ -82,6 +85,7 @@ namespace IquraStudyBE.Controllers
                   EndTime = c.EndTime,
                   Duration = c.Duration,
                   Difficulty = c.Difficulty,
+                  Quizzes = c.CompetitionQuizzes.Select(cq =>cq.Quiz).ToList(),
                   Problems = c.CompetitionProblems
                       .Where(cp => cp.Problem != null)
                       .Select(cp => new ProblemDto
@@ -90,7 +94,9 @@ namespace IquraStudyBE.Controllers
                           Title = cp.Problem.Title,
                           Description = cp.Problem.Description
                       })
-                      .ToList()
+                      .ToList(),
+                  ProblemsCount = c.CompetitionProblems.Count(),
+                  QuizzesCount = c.CompetitionQuizzes.Count(),
               })
               .FirstOrDefaultAsync();
           
