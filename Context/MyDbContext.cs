@@ -44,8 +44,10 @@ public partial class MyDbContext : IdentityDbContext<User>
     public virtual DbSet<ProblemSubmittion> ProblemSubmittions { get; set; }
     public virtual DbSet<Question> Questions { get; set; }
     public virtual DbSet<Answer> Answers { get; set; }
-    
     public virtual DbSet<Competition> Competitions { get; set; }
+    
+    public DbSet<CompetitionProblem> CompetitionProblems { get; set; }
+
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

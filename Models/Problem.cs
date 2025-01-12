@@ -26,5 +26,6 @@ public partial class Problem
 
     public virtual ICollection<TestCase> TestCases { get; } = new List<TestCase>();
     
+    public virtual ICollection<CompetitionProblem> CompetitionProblems { get; } = new List<CompetitionProblem>();
     
 }

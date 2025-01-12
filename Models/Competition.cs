@@ -11,4 +11,7 @@ public class Competition
     public DateTime EndTime { get; set; }
     public int? Duration { get; set; } // Nullable, only required for Virtual mode
     public string Difficulty { get; set; } = string.Empty; // Easy, Medium, Hard
+    
+    public virtual ICollection<CompetitionProblem> CompetitionProblems { get; } = new List<CompetitionProblem>();
+
 }

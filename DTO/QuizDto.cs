@@ -14,6 +14,15 @@ public class CreateQuizTaskDto
 
 }
 
+public class CreateCompetitionProblemsDto
+{
+    
+    public int CompetitionId { get; set; }
+    public int[]? QuizIds { get; set; }
+    public int[]? ProblemIds { get; set; }
+
+}
+
 public class CreateQuestionDto
 {
     public string Title { get; set; }
