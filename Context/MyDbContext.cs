@@ -49,6 +49,9 @@ public partial class MyDbContext : IdentityDbContext<User>
     public virtual DbSet<CompetitionProblem> CompetitionProblems { get; set; }
     public virtual DbSet<CompetitionQuiz> CompetitionQuizzes { get; set; }
     
+    public DbSet<Participation> Participations { get; set; }
+
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Quiz>()
