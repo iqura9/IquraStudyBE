@@ -11,6 +11,9 @@ using IquraStudyBE.Models;
 using IquraStudyBE.Services;
 using Microsoft.AspNetCore.Authorization;
 
+
+
+
 namespace IquraStudyBE.Controllers
 {
     [Route("api/[controller]")]
@@ -40,7 +43,7 @@ namespace IquraStudyBE.Controllers
         // GET: api/Participation/5
         [HttpGet("{competitionId}")]
         [Authorize]
-        public async Task<ActionResult<object>> GetParticipationIsValid(int competitionId)
+        public async Task<ActionResult<Participation>> GetParticipationIsValid(int competitionId)
         {
             if (_context.Participations == null)
             {
@@ -54,26 +57,26 @@ namespace IquraStudyBE.Controllers
             var participation = await _context.Participations
                 .Include(p => p.Competition)
                 .Where(p => p.UserId == userId && p.CompetitionId == competitionId)
-                .Select(p => new
-                {
-                    p.Id,
-                    p.StartedAt,
-                    p.EndedAt,
-                    p.Score,
-                    p.Status,
-                    Competition = new
+                 .Select(p => new Participation
                     {
-                        p.Competition.Id,
-                        p.Competition.Title,
-                        p.Competition.Description,
-                        p.Competition.Format,
-                        p.Competition.ParticipantMode,
-                        p.Competition.StartTime,
-                        p.Competition.EndTime,
-                        p.Competition.Duration,
-                        p.Competition.Difficulty,
-                    }
-                })
+                        Id = p.Id,
+                        StartedAt = p.StartedAt,
+                        EndedAt = p.EndedAt,
+                        Score = p.Score,
+                        Status = p.Status,
+                        Competition = new Competition
+                        {
+                            Id = p.Competition.Id,
+                            Title = p.Competition.Title,
+                            Description = p.Competition.Description,
+                            Format = p.Competition.Format,
+                            ParticipantMode = p.Competition.ParticipantMode,
+                            StartTime = p.Competition.StartTime,
+                            EndTime = p.Competition.EndTime,
+                            Duration = p.Competition.Duration,
+                            Difficulty = p.Competition.Difficulty
+                        }
+                    })
                 .FirstOrDefaultAsync();
 
             if (participation == null)
