@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using IquraStudyBE.Context;
+using IquraStudyBE.Migrations;
 using IquraStudyBE.Models;
 using IquraStudyBE.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -34,7 +35,57 @@ public class ProblemDto
     public int Id { get; set; }
     public string Title { get; set; }
     public string Description { get; set; }
+    public int Score { get; set; }
 }
+
+public class QuizDto
+{
+    public int Id { get; set; }
+    public int QuizId { get; set; }
+    public string QuizTitle { get; set; }
+    public int Score { get; set; }
+}
+
+public class ScoreboardDto
+{
+    public string UserId { get; set; }
+    public string UserName { get; set; }
+    public double TotalScore { get; set; }
+    public List<ProblemScoreDto> Problems { get; set; } = new List<ProblemScoreDto>();
+    public List<QuizScoreDto> Quizzes { get; set; } = new List<QuizScoreDto>();
+}
+
+
+
+public class ScoreboardResponseDto
+{
+    public int CompetitionId { get; set; }
+    public string Title { get; set; }
+    public List<UserScoreDto> UserScores { get; set; } = new List<UserScoreDto>();
+}
+public class UserScoreDto
+{
+    public string UserId { get; set; }
+    public string UserName { get; set; }
+    public double TotalScore { get; set; }
+    public List<ProblemScoreDto> Problems { get; set; } = new List<ProblemScoreDto>();
+    public List<QuizScoreDto> Quizzes { get; set; } = new List<QuizScoreDto>();
+}
+public class ProblemScoreDto
+{
+    public int ProblemId { get; set; }
+    public string Title { get; set; }
+    public double Score { get; set; }
+}
+
+public class QuizScoreDto
+{
+    public int QuizId { get; set; }
+    public string Title { get; set; }
+    public double Score { get; set; }
+}
+
+
 
 namespace IquraStudyBE.Controllers
 {
@@ -62,6 +113,70 @@ namespace IquraStudyBE.Controllers
           return await _context.Competitions.ToListAsync();
         }
 
+        // GET: api/Competition/Scoreboard/{competitionId}
+        [HttpGet("Scoreboard/{competitionId}")]
+        [Authorize]
+        public async Task<ActionResult<ScoreboardResponseDto>> GetScoreboard(int competitionId)
+        {
+            if (_context.Competitions == null || _context.Participations == null)
+            {
+                return NotFound("Competitions or Participations data is not available.");
+            }
+
+            // Validate competition existence
+            var competition = await _context.Competitions
+                .Include(c => c.CompetitionProblems)
+                    .ThenInclude(cp => cp.Problem)
+                .Include(c => c.CompetitionQuizzes)
+                    .ThenInclude(cq => cq.Quiz)
+                .FirstOrDefaultAsync(c => c.Id == competitionId);
+
+            if (competition == null)
+            {
+                return NotFound("Competition not found.");
+            }
+
+            // Get participations and calculate scores
+            var participations = await _context.Participations
+                .Where(p => p.CompetitionId == competitionId)
+                .Include(p => p.User)
+                .ToListAsync();
+
+            // Map participations to userScores
+            var userScores = participations.Select(p => new UserScoreDto
+            {
+                UserId = p.UserId,
+                UserName = p.User.UserName, // Assuming User has a UserName property
+                TotalScore = p.Score,
+                Problems = competition.CompetitionProblems.Select(cp => new ProblemScoreDto
+                {
+                    ProblemId = cp.Id,
+                    Title = cp.Problem?.Title ?? $"Problem {cp.Id}",
+                    Score = cp.Score // Assuming each CompetitionProblem has a score field
+                }).ToList(),
+                Quizzes = competition.CompetitionQuizzes.Select(cq => new QuizScoreDto
+                {
+                    QuizId = cq.Id,
+                    Title = cq.Quiz?.Title ?? $"Quiz {cq.Id}",
+                    Score = cq.Score // Assuming each CompetitionQuiz has a score field
+                }).ToList()
+            })
+            .OrderByDescending(us => us.TotalScore) // Sort by TotalScore descending
+            .ToList();
+
+            // Prepare the response object
+            var response = new ScoreboardResponseDto
+            {
+                CompetitionId = competition.Id,
+                Title = competition.Title,
+                UserScores = userScores
+            };
+
+            return Ok(response);
+        }
+
+
+        
         // GET: api/Competition/5
         [HttpGet("{id}")]
         public async Task<ActionResult<CompetitionDto>> GetCompetition(int id)
