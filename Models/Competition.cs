@@ -12,7 +12,7 @@ public class Competition
     public int? Duration { get; set; } // Nullable, only required for Virtual mode
     public string Difficulty { get; set; } = string.Empty; // Easy, Medium, Hard
     
-    public virtual ICollection<CompetitionProblem> CompetitionProblems { get; } = new List<CompetitionProblem>();
-    public virtual ICollection<CompetitionQuiz> CompetitionQuizzes { get; } = new List<CompetitionQuiz>();
+    public virtual ICollection<CompetitionProblem> CompetitionProblems { get; set; } = new List<CompetitionProblem>();
+    public virtual ICollection<CompetitionQuiz> CompetitionQuizzes { get; set; } = new List<CompetitionQuiz>();
 
 }

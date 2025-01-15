@@ -57,6 +57,10 @@ namespace IquraStudyBE.Controllers
             var participation = await _context.Participations
                 .Include(p => p.Competition)
                 .Where(p => p.UserId == userId && p.CompetitionId == competitionId)
+                .Include(p => p.Competition.CompetitionProblems)
+                    .ThenInclude(p => p.Problem)
+                .Include(p => p.Competition.CompetitionQuizzes)
+                    .ThenInclude(p => p.Quiz)
                  .Select(p => new Participation
                     {
                         Id = p.Id,
@@ -74,7 +78,9 @@ namespace IquraStudyBE.Controllers
                             StartTime = p.Competition.StartTime,
                             EndTime = p.Competition.EndTime,
                             Duration = p.Competition.Duration,
-                            Difficulty = p.Competition.Difficulty
+                            Difficulty = p.Competition.Difficulty,
+                            CompetitionProblems = p.Competition.CompetitionProblems,
+                            CompetitionQuizzes = p.Competition.CompetitionQuizzes,
                         }
                     })
                 .FirstOrDefaultAsync();
