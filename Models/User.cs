@@ -18,4 +18,5 @@ public partial class User : IdentityUser
     public virtual ICollection<GroupTask> GroupTasks { get; } = new List<GroupTask>();
     public virtual ICollection<Problem> Problems { get; } = new List<Problem>();
     public virtual ICollection<Quiz> Quizzes { get; } = new List<Quiz>();
+    public virtual ICollection<Competition> Competitions { get; } = new List<Competition>();
 }

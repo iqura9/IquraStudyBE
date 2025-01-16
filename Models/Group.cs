@@ -20,4 +20,6 @@ public partial class Group
     public virtual ICollection<GroupPerson> GroupPeople { get; } = new List<GroupPerson>();
 
     public virtual ICollection<GroupTask> GroupTasks { get; } = new List<GroupTask>();
+    public virtual ICollection<GroupCompetition> GroupCompetitions { get; set; } = new List<GroupCompetition>();
+
 }

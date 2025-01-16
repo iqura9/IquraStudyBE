@@ -3,6 +3,7 @@ using System;
 using IquraStudyBE.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace IquraStudyBE.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    partial class MyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250116171907_GroupCompetitions")]
+    partial class GroupCompetitions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -100,12 +103,7 @@ namespace IquraStudyBE.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("UserId")
-                        .HasColumnType("text");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Competitions");
                 });
@@ -247,7 +245,7 @@ namespace IquraStudyBE.Migrations
 
                     b.HasIndex("GroupId");
 
-                    b.ToTable("GroupCompetitions");
+                    b.ToTable("GroupCompetition");
                 });
 
             modelBuilder.Entity("IquraStudyBE.Models.GroupPerson", b =>
@@ -843,15 +841,6 @@ namespace IquraStudyBE.Migrations
                     b.Navigation("Question");
                 });
 
-            modelBuilder.Entity("IquraStudyBE.Models.Competition", b =>
-                {
-                    b.HasOne("IquraStudyBE.Models.User", "User")
-                        .WithMany("Competitions")
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("IquraStudyBE.Models.CompetitionProblem", b =>
                 {
                     b.HasOne("IquraStudyBE.Models.Competition", "Competition")
@@ -1243,8 +1232,6 @@ namespace IquraStudyBE.Migrations
 
             modelBuilder.Entity("IquraStudyBE.Models.User", b =>
                 {
-                    b.Navigation("Competitions");
-
                     b.Navigation("Grades");
 
                     b.Navigation("GroupPeople");

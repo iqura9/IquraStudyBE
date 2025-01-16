@@ -48,7 +48,7 @@ public partial class MyDbContext : IdentityDbContext<User>
     
     public virtual DbSet<CompetitionProblem> CompetitionProblems { get; set; }
     public virtual DbSet<CompetitionQuiz> CompetitionQuizzes { get; set; }
-    
+    public virtual DbSet<GroupCompetition> GroupCompetitions { get; set; }
     public DbSet<Participation> Participations { get; set; }
 
     

@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace IquraStudyBE.Models;
 
 public class Competition
@@ -11,8 +13,10 @@ public class Competition
     public DateTime EndTime { get; set; }
     public int? Duration { get; set; } // Nullable, only required for Virtual mode
     public string Difficulty { get; set; } = string.Empty; // Easy, Medium, Hard
-    
+
+    public string? UserId { get; set; }
+    public virtual User? User { get; set; }
     public virtual ICollection<CompetitionProblem> CompetitionProblems { get; set; } = new List<CompetitionProblem>();
     public virtual ICollection<CompetitionQuiz> CompetitionQuizzes { get; set; } = new List<CompetitionQuiz>();
-
+    public virtual ICollection<GroupCompetition> GroupCompetitions { get; set; } = new List<GroupCompetition>();
 }

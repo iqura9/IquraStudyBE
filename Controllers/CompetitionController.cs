@@ -11,6 +11,7 @@ using IquraStudyBE.Migrations;
 using IquraStudyBE.Models;
 using IquraStudyBE.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 
 public class CompetitionDto
 {
@@ -85,7 +86,11 @@ public class QuizScoreDto
     public double Score { get; set; }
 }
 
-
+public class AddGroupCompetitionsDto
+{
+    public int GroupId { get; set; }
+    public List<int> CompetitionIds { get; set; } = new List<int>();
+}
 
 namespace IquraStudyBE.Controllers
 {
@@ -95,12 +100,126 @@ namespace IquraStudyBE.Controllers
     {
         private readonly MyDbContext _context;
         private readonly TaskService _taskService;
-
-        public CompetitionController(MyDbContext context, TaskService taskService)
+        private readonly ITokenService _tokenService;
+        public CompetitionController(MyDbContext context, TaskService taskService,ITokenService tokenService)
         {
             _context = context;
             _taskService = taskService;
+            _tokenService = tokenService;
         }
+        
+        // GET: api/Competition/Group/{groupId}
+        [HttpGet("Group/{groupId}")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<Competition>>> GetCompetitionsByGroup(int groupId)
+        {
+            if (_context.Competitions == null || _context.Groups == null)
+            {
+                return NotFound("Competitions or Groups data is not available.");
+            }
+
+            // Check if the group exists
+            var groupExists = await _context.Groups.AnyAsync(g => g.Id == groupId);
+            if (!groupExists)
+            {
+                return NotFound($"Group with ID {groupId} does not exist.");
+            }
+
+            // Fetch competitions associated with the group
+            var competitions = await _context.GroupCompetitions
+                .Where(gc => gc.GroupId == groupId)
+                .Select(gc => gc.Competition)
+                .ToListAsync();
+
+            return Ok(competitions);
+        }
+        
+        // GET: api/Competition/Teacher
+        [HttpGet("Teacher")]
+        [Authorize(Roles = "Teacher")]
+        public async Task<ActionResult<IEnumerable<Competition>>> GetTeacherCompetitions()
+        {
+            if (_context.Competitions == null)
+            {
+                return NotFound("Competitions data is not available.");
+            }
+            
+            var teacherId = _tokenService.GetUserIdFromToken();
+
+            var competitions = await _context.Competitions
+                .Where(c => c.UserId == teacherId)
+                .Select(c => new
+                {
+                    c.Id,
+                    c.Title,
+                })
+                .ToListAsync();
+
+            return Ok(competitions);
+        }
+        
+  // POST: api/Competition/Group
+[HttpPost("Group")]
+[Authorize]
+public async Task<ActionResult> AddCompetitionsToGroup([FromBody] AddGroupCompetitionsDto dto)
+{
+    if (_context.Competitions == null || _context.Groups == null || _context.GroupCompetitions == null)
+    {
+        return NotFound("Required data sets are not available.");
+    }
+
+    // Validate that the group exists
+    var groupExists = await _context.Groups.AnyAsync(g => g.Id == dto.GroupId);
+    if (!groupExists)
+    {
+        return NotFound($"Group with ID {dto.GroupId} does not exist.");
+    }
+
+    // Materialize valid competition IDs to avoid IQueryable issues
+    var validCompetitionIds = await _context.Competitions
+        .Where(c => dto.CompetitionIds.Contains(c.Id))
+        .Select(c => c.Id)
+        .ToListAsync();
+
+    // Check for invalid competition IDs
+    var invalidCompetitionIds = dto.CompetitionIds.Except(validCompetitionIds).ToList();
+    if (invalidCompetitionIds.Any())
+    {
+        return NotFound($"Competitions with IDs {string.Join(", ", invalidCompetitionIds)} do not exist.");
+    }
+
+    // Fetch existing group-competition relationships and materialize them
+    var existingCompetitionIds = await _context.GroupCompetitions
+        .Where(gc => gc.GroupId == dto.GroupId)
+        .Select(gc => gc.CompetitionId)
+        .ToListAsync();
+
+    // Filter out competitions already associated with the group
+    var newCompetitionIds = validCompetitionIds
+        .Cast<int>() // Ensure validCompetitionIds is explicitly cast to IEnumerable<int>
+        .Except(existingCompetitionIds.Cast<int>()) // Ensure existingCompetitionIds is also explicitly cast
+        .ToList();
+
+    if (!newCompetitionIds.Any())
+    {
+        return BadRequest("All provided competitions are already associated with the group.");
+    }
+
+    // Add new group-competition relationships
+    var groupCompetitions = newCompetitionIds.Select(competitionId => new GroupCompetition
+    {
+        GroupId = dto.GroupId,
+        CompetitionId = competitionId,
+        CreateByUserId = User.FindFirst("sub")?.Value, // Assuming you want to track who added this
+        CreatedAt = DateTime.UtcNow
+    }).ToList();
+
+    await _context.GroupCompetitions.AddRangeAsync(groupCompetitions);
+    await _context.SaveChangesAsync();
+
+    return CreatedAtAction(nameof(GetCompetitionsByGroup), new { groupId = dto.GroupId }, groupCompetitions);
+}
+
 
         // GET: api/Competition
         [HttpGet]
@@ -257,14 +376,18 @@ namespace IquraStudyBE.Controllers
         // POST: api/Competition
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize(Roles = "Teacher")]
         public async Task<ActionResult<Competition>> PostCompetition(Competition competition)
         {
           if (_context.Competitions == null)
           {
               return Problem("Entity set 'MyDbContext.Competitions'  is null.");
           }
-            _context.Competitions.Add(competition);
-            await _context.SaveChangesAsync();
+          var teacherId = _tokenService.GetUserIdFromToken();
+          competition.UserId = teacherId;
+            
+          _context.Competitions.Add(competition);
+          await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetCompetition", new { id = competition.Id }, competition);
         }
