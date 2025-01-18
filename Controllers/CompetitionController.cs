@@ -235,7 +235,7 @@ public async Task<ActionResult> AddCompetitionsToGroup([FromBody] AddGroupCompet
         // GET: api/Competition/Scoreboard/{competitionId}
         [HttpGet("Scoreboard/{competitionId}")]
         [Authorize]
-        public async Task<ActionResult<ScoreboardResponseDto>> GetScoreboard(int competitionId)
+        public async Task<ActionResult<ScoreboardResponseDto>> GetScoreboard(int competitionId, [FromQuery] int? groupId)
         {
             if (_context.Competitions == null || _context.Participations == null)
             {
@@ -257,7 +257,7 @@ public async Task<ActionResult> AddCompetitionsToGroup([FromBody] AddGroupCompet
 
             // Get participations and calculate scores
             var participations = await _context.Participations
-                .Where(p => p.CompetitionId == competitionId)
+                .Where(p => p.CompetitionId == competitionId && p.GroupId == groupId)
                 .Include(p => p.User)
                 .ToListAsync();
 

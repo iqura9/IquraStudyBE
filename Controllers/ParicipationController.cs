@@ -96,7 +96,7 @@ namespace IquraStudyBE.Controllers
         // POST: api/Participation
         [HttpPost]
         [Authorize]
-        public async Task<ActionResult> CreateParticipation([FromBody] int competitionId)
+        public async Task<ActionResult> CreateParticipation([FromBody] int competitionId, int groupId)
         {
             if (_context.Participations == null || _context.Competitions == null)
             {
@@ -129,7 +129,8 @@ namespace IquraStudyBE.Controllers
                 CompetitionId = competitionId,
                 StartedAt = DateTime.UtcNow,
                 Status = "Active",
-                Score = 0 // Default score
+                Score = 0, // Default score
+                GroupId = groupId
             };
 
             _context.Participations.Add(newParticipation);
