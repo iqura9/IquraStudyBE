@@ -50,6 +50,8 @@ public partial class MyDbContext : IdentityDbContext<User>
     public virtual DbSet<CompetitionQuiz> CompetitionQuizzes { get; set; }
     public virtual DbSet<GroupCompetition> GroupCompetitions { get; set; }
     public DbSet<Participation> Participations { get; set; }
+    
+    public DbSet<Submission> Submissions { get; set; }
 
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -22,4 +22,6 @@ public class Participation
     public virtual User User { get; set; }
     public virtual Competition Competition { get; set; }
     public virtual Group Group { get; set; }
+    
+    public virtual ICollection<Submission> Submissions { get; set; } = new List<Submission>();
 }

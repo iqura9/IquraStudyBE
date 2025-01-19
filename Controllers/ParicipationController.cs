@@ -104,8 +104,7 @@ namespace IquraStudyBE.Controllers
             }
 
             var userId = _tokenService.GetUserIdFromToken();
-
-
+            
             // Check if the competition exists
             var competitionExists = await _context.Competitions.AnyAsync(c => c.Id == competitionId);
             if (!competitionExists)
@@ -137,6 +136,92 @@ namespace IquraStudyBE.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(newParticipation);
+        }
+        // GET: api/Participation/{participationId}/Submissions
+        [HttpGet("{participationId}/Submissions")]
+        public async Task<ActionResult<IEnumerable<Submission>>> GetSubmissionsForParticipation(int participationId)
+        {
+            var participation = await _context.Participations
+                .Include(p => p.Submissions)
+                .FirstOrDefaultAsync(p => p.Id == participationId);
+
+            if (participation == null)
+                return NotFound($"Participation with ID {participationId} not found.");
+
+            return Ok(participation.Submissions);
+        }
+        
+        // GET: api/Participation/{participationId}/Submissions/{submissionId}
+        [HttpGet("{participationId}/Submissions/{submissionId}")]
+        public async Task<ActionResult<Submission>> GetSubmissionById(int participationId, int submissionId)
+        {
+            var submission = await _context.Submissions
+                .FirstOrDefaultAsync(s => s.Id == submissionId && s.ParticipationId == participationId);
+
+            if (submission == null)
+                return NotFound($"Submission with ID {submissionId} not found for Participation {participationId}.");
+
+            return Ok(submission);
+        }
+        
+        // POST: api/Participation/{participationId}/Submissions
+        [HttpPost("{participationId}/Submissions")]
+        public async Task<ActionResult<Submission>> CreateSubmission(int participationId, [FromBody] Submission submission)
+        {
+            var participation = await _context.Participations.FindAsync(participationId);
+            if (participation == null)
+                return NotFound($"Participation with ID {participationId} not found.");
+
+            // Ensure the submission is linked correctly
+            submission.ParticipationId = participationId;
+            submission.SubmittedAt = DateTime.UtcNow;
+
+            _context.Submissions.Add(submission);
+            await _context.SaveChangesAsync();
+
+            // Return a 201 Created response
+            return CreatedAtAction(
+                nameof(GetSubmissionById), 
+                new { participationId = participationId, submissionId = submission.Id },
+                submission
+            );
+        }
+        
+        // PUT: api/Participation/{participationId}/Submissions/{submissionId}
+        [HttpPut("{participationId}/Submissions/{submissionId}")]
+        public async Task<IActionResult> UpdateSubmission(int participationId, int submissionId, [FromBody] Submission updatedSubmission)
+        {
+            var submission = await _context.Submissions
+                .FirstOrDefaultAsync(s => s.Id == submissionId && s.ParticipationId == participationId);
+
+            if (submission == null)
+                return NotFound($"Submission with ID {submissionId} not found for Participation {participationId}.");
+
+            // Update fields (this is simplistic; consider using AutoMapper or manual mapping)
+            submission.Score = updatedSubmission.Score;
+            submission.Type = updatedSubmission.Type;
+            submission.QuizId = updatedSubmission.QuizId;
+            submission.ProblemId = updatedSubmission.ProblemId;
+            // ... other fields
+
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
+        
+        // DELETE: api/Participation/{participationId}/Submissions/{submissionId}
+        [HttpDelete("{participationId}/Submissions/{submissionId}")]
+        public async Task<IActionResult> DeleteSubmission(int participationId, int submissionId)
+        {
+            var submission = await _context.Submissions
+                .FirstOrDefaultAsync(s => s.Id == submissionId && s.ParticipationId == participationId);
+
+            if (submission == null)
+                return NotFound($"Submission with ID {submissionId} not found for Participation {participationId}.");
+
+            _context.Submissions.Remove(submission);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
         }
 
 
