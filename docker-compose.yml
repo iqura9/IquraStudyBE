@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   server_api:
@@ -27,6 +27,7 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+      - ./backups:/root
     restart: always
 
   pgadmin:
@@ -44,4 +45,4 @@ services:
 
 volumes:
   pgdata:
-  pgadmin-data: 
+  pgadmin-data:
