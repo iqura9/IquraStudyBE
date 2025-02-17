@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using IquraStudyBE.Classes;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -55,6 +56,7 @@ namespace IquraStudyBE.Controllers
 
             // Check if the user is a participant of the given competition
             var participation = await _context.Participations
+                .Include(p => p.Submissions)
                 .Include(p => p.Competition)
                 .Where(p => p.UserId == userId && p.CompetitionId == competitionId)
                 .Include(p => p.Competition.CompetitionProblems)
@@ -79,9 +81,45 @@ namespace IquraStudyBE.Controllers
                             EndTime = p.Competition.EndTime,
                             Duration = p.Competition.Duration,
                             Difficulty = p.Competition.Difficulty,
-                            CompetitionProblems = p.Competition.CompetitionProblems,
-                            CompetitionQuizzes = p.Competition.CompetitionQuizzes,
-                        }
+                            CompetitionProblems = p.Competition.CompetitionProblems
+                                .Select(cp => new CompetitionProblem
+                                {
+                                    Id = cp.Id,
+                                    ProblemId = cp.ProblemId,
+                                    CompetitionId = cp.CompetitionId,
+                                    Problem = cp.Problem,
+                                    MaxScore = p.Submissions
+                                        .Where(s => s.ProblemId == cp.ProblemId)
+                                        .Select(s => s.Score)
+                                        .OrderByDescending(s => s)
+                                        .FirstOrDefault(),
+                                    SubmittedAt = p.Submissions
+                                        .Where(s => s.ProblemId == cp.ProblemId)
+                                        .OrderByDescending(s => s.Score)
+                                        .Select(s => s.SubmittedAt)
+                                        .FirstOrDefault(),
+                                }).ToList(),
+                            CompetitionQuizzes = p.Competition.CompetitionQuizzes
+                                .Select(cq => new CompetitionQuiz
+                                {
+                                    Id = cq.Id,
+                                    QuizId = cq.QuizId,
+                                    Quiz = cq.Quiz,
+                                    MaxScore = p.Submissions
+                                        .Where(s => s.QuizId == cq.QuizId)
+                                        .Select(s => s.Score)
+                                        .OrderByDescending(s => s)
+                                        .FirstOrDefault(),
+                                    SubmittedAt = p.Submissions
+                                        .Where(s => s.QuizId == cq.QuizId)
+                                        .OrderByDescending(s => s.Score)
+                                        .Select(s => s.SubmittedAt)
+                                        .FirstOrDefault(),
+                                })
+                                .ToList()
+                            
+                        },
+                        Submissions=p.Submissions,
                     })
                 .FirstOrDefaultAsync();
 

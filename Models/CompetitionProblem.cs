@@ -10,4 +10,6 @@ public class CompetitionProblem
     public int ProblemId { get; set; }
     public virtual Problem Problem { get; set; }
     public int Score { get; set; }
+    public DateTime? SubmittedAt { get; set; }
+    public double MaxScore { get; set; }
 }

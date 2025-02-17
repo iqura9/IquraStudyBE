@@ -1,3 +1,5 @@
+using IquraStudyBE.Models;
+
 namespace IquraStudyBE.Classes;
 
 public class CreateQuizDto
@@ -77,4 +79,16 @@ public class QuizVerificationResponse
 public class UpdateQuizTitle
 {
     public string Title { get; set; }
+}
+
+public class CompetitionQuizDto
+{
+    public int Id { get; set; }
+    
+    public int CompetitionId { get; set; }
+    public virtual Competition Competition { get; set; }
+
+    public int QuizId { get; set; }
+    public virtual Quiz Quiz { get; set; }
+    public int Score { get; set; }
 }

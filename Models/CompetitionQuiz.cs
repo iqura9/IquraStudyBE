@@ -10,4 +10,6 @@ public class CompetitionQuiz
     public int QuizId { get; set; }
     public virtual Quiz Quiz { get; set; }
     public int Score { get; set; }
+    public double? MaxScore { get; set; }
+    public DateTime? SubmittedAt { get; set; }
 }

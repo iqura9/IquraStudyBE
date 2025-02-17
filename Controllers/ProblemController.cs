@@ -12,6 +12,15 @@ using IquraStudyBE.ViewModal;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 
+public class VerifySubmittionRequest
+{
+    public int CompetitionId { get; set; }
+    public int ParticipationId { get; set; }
+    public int ProblemId { get; set; }
+    public string SourceCode { get; set; }
+    public double Score { get; set; }
+}
+
 namespace IquraStudyBE.Controllers
 {
     [Route("api/[controller]")]
@@ -219,6 +228,65 @@ namespace IquraStudyBE.Controllers
 
             return NoContent();
         }
+        
+        // POST: api/Problem/VerifySubmittion
+        [HttpPost("VerifySubmittion")]
+        [Authorize]
+        public async Task<ActionResult<double>> VerifySubmittion([FromBody] VerifySubmittionRequest request)
+        {
+            // 1) Get the currently logged-in user ID
+            var userId = _tokenService.GetUserIdFromToken();
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized("Invalid user token.");
+
+            // 2) Ensure the competition exists
+            var competition = await _context.Competitions
+                .FirstOrDefaultAsync(c => c.Id == request.CompetitionId);
+
+            if (competition == null)
+                return NotFound("Competition not found.");
+
+            // 3) Ensure the user has a valid participation for this competition
+            var participation = await _context.Participations
+                .FirstOrDefaultAsync(p => 
+                    p.Id == request.ParticipationId &&
+                    p.CompetitionId == request.CompetitionId &&
+                    p.UserId == userId);
+
+            if (participation == null)
+            {
+                return Problem("No valid participation found for this competition (or user is not authorized).");
+            }
+            
+            // 4) Fetch the quiz details
+            var problem = await _context.Quizzes
+                .Include(q => q.Questions)
+                    .ThenInclude(qn => qn.Answers)
+                .FirstOrDefaultAsync(q => q.Id == request.ProblemId);
+
+            if (problem == null)
+            {
+                return NotFound("Problem not found.");
+            }
+
+            // 5) Create a new submission record
+            var problemSubmittion = new Submission
+            {
+                ParticipationId = participation.Id,
+                Type = SubmissionType.Quiz,
+                ProblemId = problem.Id,
+                Score = request.Score,
+                SubmittedAt = DateTime.UtcNow,
+                SourceCode = request.SourceCode,
+            };
+
+            _context.Submissions.Add(problemSubmittion);
+            await _context.SaveChangesAsync();
+
+            // 8) Return the score
+            return Ok(request.Score);
+        }
+        
 
         private bool ProblemExists(int id)
         {

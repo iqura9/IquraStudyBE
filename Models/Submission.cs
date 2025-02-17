@@ -23,4 +23,5 @@ public class Submission
 
     public DateTime SubmittedAt { get; set; } = DateTime.UtcNow;
     public double Score { get; set; } 
+    public string? SourceCode { get; set; }
 }

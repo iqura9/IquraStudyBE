@@ -121,11 +121,17 @@ namespace IquraStudyBE.Migrations
                     b.Property<int>("CompetitionId")
                         .HasColumnType("integer");
 
+                    b.Property<double>("MaxScore")
+                        .HasColumnType("double precision");
+
                     b.Property<int>("ProblemId")
                         .HasColumnType("integer");
 
                     b.Property<int>("Score")
                         .HasColumnType("integer");
+
+                    b.Property<DateTime?>("SubmittedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
@@ -147,11 +153,17 @@ namespace IquraStudyBE.Migrations
                     b.Property<int>("CompetitionId")
                         .HasColumnType("integer");
 
+                    b.Property<double?>("MaxScore")
+                        .HasColumnType("double precision");
+
                     b.Property<int>("QuizId")
                         .HasColumnType("integer");
 
                     b.Property<int>("Score")
                         .HasColumnType("integer");
+
+                    b.Property<DateTime?>("SubmittedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
@@ -618,6 +630,9 @@ namespace IquraStudyBE.Migrations
 
                     b.Property<double>("Score")
                         .HasColumnType("double precision");
+
+                    b.Property<string>("SourceCode")
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("SubmittedAt")
                         .HasColumnType("timestamp with time zone");
